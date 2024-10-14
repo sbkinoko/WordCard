@@ -12,8 +12,8 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-import kmptemplate.composeapp.generated.resources.Res
-import kmptemplate.composeapp.generated.resources.compose_multiplatform
+import wordcard.composeapp.generated.resources.Res
+import wordcard.composeapp.generated.resources.compose_multiplatform
 import org.koin.compose.koinInject
 import viewmodel.KmpViewModel
 

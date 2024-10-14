@@ -1,4 +1,4 @@
-rootProject.name = "KMPTemplate"
+rootProject.name = "WordCard"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
