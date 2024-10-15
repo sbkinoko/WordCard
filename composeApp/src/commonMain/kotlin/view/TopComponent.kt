@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TopComponent(
     text: String,
+    onClickDetail: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val textState = remember { mutableStateOf(text) }
@@ -28,9 +29,7 @@ fun TopComponent(
             maxLines = 1,
         )
         Button(
-            onClick = {
-                // 詳細への遷移処理
-            },
+            onClick = onClickDetail
         ) {
             Text(text = "Detail")
         }

@@ -15,13 +15,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
+import viewmodel.DetailViewModel
 
 @Composable
-fun DetailScreen() {
+fun DetailScreen(
+    modifier: Modifier = Modifier,
+    detailViewModel: DetailViewModel = koinInject(),
+) {
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -35,7 +40,7 @@ fun DetailScreen() {
                 modifier = Modifier
                     .padding(horizontal = 10.dp),
                 onClick = {
-                    // 戻る処理
+                    detailViewModel.reset()
                 },
             ) {
                 Text(
