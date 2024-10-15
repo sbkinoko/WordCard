@@ -11,12 +11,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
+import viewmodel.TopViewModel
 
 @Composable
-fun TopScreen() {
+fun TopScreen(
+    modifier: Modifier = Modifier,
+    topViewModel: TopViewModel = koinInject()
+) {
     val focusManager = LocalFocusManager.current
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -29,12 +34,9 @@ fun TopScreen() {
     ) {
         TopComponent(
             text = "Hello, World!",
-        )
-        TopComponent(
-            text = "Hello, World!2",
-        )
-        TopComponent(
-            text = "Hello, World!3",
+            onClickDetail = {
+                topViewModel.onClick("Hello world")
+            }
         )
     }
 }

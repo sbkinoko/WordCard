@@ -1,23 +1,19 @@
 import org.koin.dsl.module
-import repository.GoodMorningRepository
-import repository.GreetingRepository
-import usecase.GoodMorningUseCase
-import viewmodel.KmpViewModel
+import repository.screentype.ScreenTypeRepository
+import repository.screentype.ScreenTypeRepositoryImpl
+import viewmodel.DetailViewModel
+import viewmodel.TopViewModel
 
 val AppModule = module {
-    single<GreetingRepository> {
-        GoodMorningRepository()
+    single<ScreenTypeRepository> {
+        ScreenTypeRepositoryImpl()
     }
 
-    single<GoodMorningUseCase> {
-        GoodMorningUseCase(
-            repository = get(),
-        )
+    single {
+        TopViewModel()
     }
 
-    single<KmpViewModel> {
-        KmpViewModel(
-            useCase = get(),
-        )
+    single {
+        DetailViewModel()
     }
 }
