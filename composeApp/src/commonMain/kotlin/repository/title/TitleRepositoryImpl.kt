@@ -11,19 +11,28 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class TitleRepositoryImpl : TitleRepository {
     private val mutableRealmTitleFlow = MutableSharedFlow<List<Title>>()
-    override val titleFlow: SharedFlow<List<Title>>
+    private val titleFlow: SharedFlow<List<Title>>
         get() = mutableRealmTitleFlow.asSharedFlow()
+
+    override val titleState: StateFlow<List<Title>>
+        get() = titleFlow.stateIn(
+            scope = CoroutineScope(Dispatchers.Default),
+            started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
+            initialValue = titleList,
+        )
 
     private val config: RealmConfiguration =
         RealmConfiguration.create(schema = setOf(RealmTitle::class))
     private val realm: Realm = Realm.open(config)
 
-    override var titleList = realm.query<RealmTitle>().find().toList().map {
+    private var titleList = realm.query<RealmTitle>().find().toList().map {
         it.toTitle()
     }
         set(value) {

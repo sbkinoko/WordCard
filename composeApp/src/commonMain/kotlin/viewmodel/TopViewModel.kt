@@ -1,8 +1,5 @@
 package viewmodel
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.stateIn
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.screentype.ScreenTypeRepository
@@ -12,11 +9,7 @@ class TopViewModel : KoinComponent {
     private val screenTypeRepository: ScreenTypeRepository by inject()
     private val titleRepository: TitleRepository by inject()
 
-    val titleFlow = titleRepository.titleFlow.stateIn(
-        scope = CoroutineScope(Dispatchers.Default),
-        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
-        initialValue = titleRepository.titleList,
-    )
+    val titleFlow = titleRepository.titleState
 
     fun onClick(text: String) {
         screenTypeRepository.screenType = text
