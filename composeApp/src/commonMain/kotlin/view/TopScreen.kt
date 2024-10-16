@@ -51,13 +51,22 @@ fun TopScreen(
                 groups.value
             ) { index, title ->
                 TopComponent(
-                    text = title,
+                    text = title.title,
                     onClickDetail = {
                         topViewModel.onClick("Hello world")
                     },
                     onClickDelete = {
                         topViewModel.deleteAt(
                             index
+                        )
+                    },
+                    saveText = {
+                        topViewModel.save(index)
+                    },
+                    onEditText = {newTitle ->
+                        topViewModel.editTitle(
+                            index,
+                            newTitle
                         )
                     }
                 )

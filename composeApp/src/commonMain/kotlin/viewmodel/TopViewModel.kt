@@ -1,5 +1,6 @@
 package viewmodel
 
+import domain.Title
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,8 +11,8 @@ import repository.screentype.ScreenTypeRepository
 class TopViewModel : KoinComponent {
     private val screenTypeRepository: ScreenTypeRepository by inject()
 
-    private val _groupsFlow = MutableStateFlow<List<String>>(listOf())
-    val groupsFlow: StateFlow<List<String>> = _groupsFlow.asStateFlow()
+    private val _groupsFlow: MutableStateFlow<List<Title>> = MutableStateFlow(listOf())
+    val groupsFlow: StateFlow<List<Title>> = _groupsFlow.asStateFlow()
 
     fun onClick(text: String) {
         screenTypeRepository.screenType = text
@@ -19,7 +20,7 @@ class TopViewModel : KoinComponent {
 
     private var num = 0
     fun addGroup() {
-        _groupsFlow.value += "num:$num"
+        _groupsFlow.value += Title()
         num++
     }
 
@@ -27,5 +28,21 @@ class TopViewModel : KoinComponent {
         val list = _groupsFlow.value.toMutableList()
         list.removeAt(index)
         _groupsFlow.value = list
+    }
+
+    fun editTitle(
+        index: Int,
+        title: String,
+    ) {
+        val list = _groupsFlow.value.toMutableList()
+        list[index] = list[index].copy(
+            title = title
+        )
+
+        _groupsFlow.value = list.toList()
+    }
+
+    fun save(index: Int) {
+
     }
 }
