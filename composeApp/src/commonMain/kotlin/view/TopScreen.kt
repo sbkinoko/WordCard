@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -25,6 +28,9 @@ fun TopScreen(
     topViewModel: TopViewModel = koinInject()
 ) {
     val focusManager = LocalFocusManager.current
+
+    val groups = topViewModel.groupsFlow.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -41,11 +47,18 @@ fun TopScreen(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
-            item {
+            itemsIndexed(
+                groups.value
+            ) { index, title ->
                 TopComponent(
-                    text = "Hello, World!",
+                    text = title,
                     onClickDetail = {
                         topViewModel.onClick("Hello world")
+                    },
+                    onClickDelete = {
+                        topViewModel.deleteAt(
+                            index
+                        )
                     }
                 )
             }
@@ -53,7 +66,7 @@ fun TopScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-
+                topViewModel.addGroup()
             }
         ) {
             Text("+")

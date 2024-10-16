@@ -15,17 +15,17 @@ import androidx.compose.ui.unit.dp
 fun TopComponent(
     text: String,
     onClickDetail: () -> Unit,
+    onClickDelete: () -> Unit,
+    onEditText: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val textState = remember { mutableStateOf(text) }
-
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         TextField(
-            value = textState.value,
-            onValueChange = { textState.value = it },
+            value = text,
+            onValueChange = onEditText,
             maxLines = 1,
         )
         Button(
@@ -35,9 +35,7 @@ fun TopComponent(
         }
 
         Button(
-            onClick = {
-                //　削除処理
-            },
+            onClick = onClickDelete,
         ) {
             Text("-")
         }
