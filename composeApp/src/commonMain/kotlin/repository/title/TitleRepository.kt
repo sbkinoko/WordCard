@@ -1,11 +1,11 @@
 package repository.title
 
 import domain.Title
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
 interface TitleRepository {
     var titleList: List<Title>
-    val titleFlow: SharedFlow<List<Title>>
+    val titleState: StateFlow<List<Title>>
 
     fun add()
 
