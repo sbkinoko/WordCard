@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -18,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import io.realm.kotlin.internal.interop.ArrayAccessor
 import org.koin.compose.koinInject
 import viewmodel.TopViewModel
 
@@ -29,7 +27,7 @@ fun TopScreen(
 ) {
     val focusManager = LocalFocusManager.current
 
-    val groups = topViewModel.groupsFlow.collectAsState()
+    val groups = topViewModel.titleFlow.collectAsState()
 
     Column(
         modifier = modifier
@@ -60,10 +58,7 @@ fun TopScreen(
                             index
                         )
                     },
-                    saveText = {
-                        topViewModel.save(index)
-                    },
-                    onEditText = {newTitle ->
+                    onEditText = { newTitle ->
                         topViewModel.editTitle(
                             index,
                             newTitle
