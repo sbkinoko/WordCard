@@ -32,7 +32,7 @@ class TitleRepositoryImpl : TitleRepository {
         RealmConfiguration.create(schema = setOf(RealmTitle::class))
     private val realm: Realm = Realm.open(config)
 
-    override var titleList = realm.query<RealmTitle>().find().toList().map {
+    private var titleList = realm.query<RealmTitle>().find().toList().map {
         it.toTitle()
     }
         set(value) {
