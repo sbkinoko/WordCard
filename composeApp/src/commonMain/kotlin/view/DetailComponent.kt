@@ -63,15 +63,19 @@ fun DetailComponent(
         ) {
             TextField(
                 value = backColorString.value,
-                onValueChange = {
-                    backColorString.value = it.take(6)
+                onValueChange = { field ->
+                    backColorString.value = field.take(6)
                     if (backColorString.value.length != 6) {
                         return@TextField
                     }
                     val colorValue = backColorString.value
                         .chunked(2)
-                        .map {
-                            it.toInt(16)
+                        .map { chunked ->
+                            try {
+                                chunked.toInt(16)
+                            } catch (e: NumberFormatException) {
+                                255
+                            }
                         }
                     backColor.value = Color(colorValue[0], colorValue[1], colorValue[2])
                 },
