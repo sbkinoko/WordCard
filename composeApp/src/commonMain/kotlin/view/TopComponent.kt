@@ -9,23 +9,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun TopComponent(
     text: String,
     onClickDetail: () -> Unit,
+    onClickDelete: () -> Unit,
+    onEditText: (String) -> Unit,
+    saveText: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val textState = remember { mutableStateOf(text) }
-
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         TextField(
-            value = textState.value,
-            onValueChange = { textState.value = it },
+            modifier = Modifier.onFocusChanged {
+                if (it.isFocused.not()) {
+                    saveText()
+                }
+            },
+            value = text,
+            onValueChange = onEditText,
             maxLines = 1,
         )
         Button(
@@ -35,9 +42,7 @@ fun TopComponent(
         }
 
         Button(
-            onClick = {
-                //　削除処理
-            },
+            onClick = onClickDelete,
         ) {
             Text("-")
         }
