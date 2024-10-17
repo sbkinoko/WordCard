@@ -18,32 +18,43 @@ import org.mongodb.kbson.ObjectId
 
 class DetailRepositoryImpl : DetailRepository {
     private val mutableRealmTitleFlow: MutableSharedFlow<List<Detail>> = MutableSharedFlow()
-    private val titleFlow: SharedFlow<List<Detail>>
-        get() = mutableRealmTitleFlow.asSharedFlow()
+    private val titleFlow: SharedFlow<List<Detail>> = mutableRealmTitleFlow.asSharedFlow()
 
     private val config: RealmConfiguration =
         RealmConfiguration.create(schema = setOf(RealmDetail::class))
     private val realm: Realm = Realm.open(config)
 
-    override val detailListState: StateFlow<List<Detail>>
-        get() = titleFlow.stateIn(
-            scope = CoroutineScope(Dispatchers.Default),
-            started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
-            initialValue = titleList,
-        )
-
-    private var titleList: List<Detail> = realm
-        .query<RealmDetail>()
-        .find()
-        .toList()
-        .map {
-            it.toDetail()
-        }
+    private var titleList: List<Detail> = emptyList()
         set(value) {
             field = value
             CoroutineScope(Dispatchers.Default).launch {
                 mutableRealmTitleFlow.emit(value)
             }
+        }
+
+    override val detailListState: StateFlow<List<Detail>> = titleFlow.stateIn(
+        scope = CoroutineScope(Dispatchers.Default),
+        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
+        initialValue = titleList,
+    )
+
+    override var titleId: ObjectId? = null
+        set(value) {
+            field = value
+            if (value == null) {
+                titleList = emptyList()
+            }
+
+            titleList = realm
+                .query<RealmDetail>(
+                    "titleId == $0", titleId
+                )
+                .find()
+                .toList()
+                .map {
+                    it.toDetail()
+                }
+            println(titleList.size)
         }
 
     override fun updateAt(
@@ -53,7 +64,10 @@ class DetailRepositoryImpl : DetailRepository {
         color: String,
     ) {
         realm.writeBlocking {
-            val detail = realm.query<RealmDetail>("id == $0", id).first().find()
+            val detail = realm
+                .query<RealmDetail>("id == $0", id)
+                .first()
+                .find()
                 ?: return@writeBlocking
             findLatest(detail)?.apply {
                 this.front = front
@@ -75,9 +89,13 @@ class DetailRepositoryImpl : DetailRepository {
         }.toMutableList()
     }
 
-    override fun add() {
+    override fun add(
+        titleId: ObjectId,
+    ) {
         realm.writeBlocking {
-            val detail = RealmDetail()
+            val detail = RealmDetail().apply {
+                this.titleId = titleId
+            }
             copyToRealm(detail)
 
             val list = titleList + detail.toDetail()
