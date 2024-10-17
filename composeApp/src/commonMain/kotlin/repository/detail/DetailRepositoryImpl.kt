@@ -31,18 +31,22 @@ class DetailRepositoryImpl : DetailRepository {
         }
 
     override fun updateAt(
-        index: Int,
+        id: Int,
         front: String,
         back: String,
         color: String,
     ) {
-        val list = titleList.toMutableList()
-        list[index] = list[index].copy(
-            front = front,
-            back = back,
-            color = color,
-        )
-        titleList = list
+        titleList = titleList.map { detail ->
+            if (detail.id == id) {
+                detail.copy(
+                    front = front,
+                    back = back,
+                    color = color,
+                )
+            } else {
+                detail
+            }
+        }.toMutableList()
     }
 
     override fun add() {
@@ -50,9 +54,9 @@ class DetailRepositoryImpl : DetailRepository {
         titleList = list
     }
 
-    override fun deleteAt(index: Int) {
-        val list = titleList.toMutableList()
-        list.removeAt(index)
-        titleList = list
+    override fun deleteAt(id: Int) {
+        titleList = titleList.filter {
+            it.id != id
+        }
     }
 }

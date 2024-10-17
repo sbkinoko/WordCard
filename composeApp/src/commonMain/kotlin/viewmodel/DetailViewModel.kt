@@ -15,4 +15,26 @@ class DetailViewModel : KoinComponent {
     fun reset() {
         screenTypeRepository.screenType = null
     }
+
+    fun update(
+        id: Int,
+        front: String,
+        back: String,
+        color: String,
+    ) {
+        detailRepository.updateAt(
+            id = id,
+            front = front,
+            back = back,
+            color = color,
+        )
+    }
+
+    fun add() {
+        detailRepository.add()
+    }
+
+    fun delete(id: Int) {
+        detailRepository.deleteAt(id)
+    }
 }

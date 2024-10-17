@@ -9,13 +9,13 @@ interface DetailRepository {
     fun add()
 
     fun updateAt(
-        index: Int,
+        id: Int,
         front: String,
         back: String,
         color: String,
     )
 
     fun deleteAt(
-        index: Int,
+        id: Int,
     )
 }
