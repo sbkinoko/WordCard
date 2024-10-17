@@ -23,7 +23,12 @@ fun DetailComponent(
     delete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val backColor = remember { mutableStateOf(Color.White) }
+    val backColor = remember {
+        mutableStateOf(
+            detail.color.toColor()
+        )
+    }
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -70,26 +75,13 @@ fun DetailComponent(
             TextField(
                 value = detail.color,
                 onValueChange = { field ->
-                    val tokenField = field.take(6)
                     update(
                         detail.front,
                         detail.back,
-                        tokenField,
+                        field.take( colorStringLength),
                     )
 
-                    if (tokenField.length != 6) {
-                        return@TextField
-                    }
-                    val colorValue = tokenField
-                        .chunked(2)
-                        .map { chunked ->
-                            try {
-                                chunked.toInt(16)
-                            } catch (e: NumberFormatException) {
-                                255
-                            }
-                        }
-                    backColor.value = Color(colorValue[0], colorValue[1], colorValue[2])
+                    backColor.value = field.toColor()
                 },
                 label = { Text("Color") }
             )
@@ -116,4 +108,28 @@ fun DetailComponent(
             Text("-")
         }
     }
+}
+
+const val digit = 2
+const val ff = 255
+const val radix = 16
+const val colorStringLength = 6
+
+fun String.toColor(): Color {
+    val tokenField = this.take(colorStringLength)
+    if (tokenField.length != digit * colorStringLength) {
+        return Color(ff, ff, ff)
+    }
+
+    val colorValue = tokenField
+        .chunked(digit)
+        .map { chunked ->
+            try {
+                chunked.toInt(radix)
+            } catch (e: NumberFormatException) {
+                ff
+            }
+        }
+
+    return Color(colorValue[0], colorValue[1], colorValue[2])
 }

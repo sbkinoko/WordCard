@@ -2,6 +2,7 @@ package viewmodel
 
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.mongodb.kbson.ObjectId
 import repository.detail.DetailRepository
 import repository.screentype.ScreenTypeRepository
 
@@ -17,7 +18,7 @@ class DetailViewModel : KoinComponent {
     }
 
     fun update(
-        id: Int,
+        id: ObjectId,
         front: String,
         back: String,
         color: String,
@@ -34,7 +35,7 @@ class DetailViewModel : KoinComponent {
         detailRepository.add()
     }
 
-    fun delete(id: Int) {
+    fun delete(id: ObjectId) {
         detailRepository.deleteAt(id)
     }
 }
