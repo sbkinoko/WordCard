@@ -9,21 +9,21 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import domain.Detail
 
 @Composable
 fun DetailComponent(
+    detail: Detail,
+    update: (front: String, back: String, color: String) -> Unit,
+    delete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val frontText = remember { mutableStateOf("") }
-    val backText = remember { mutableStateOf("") }
-    val backColorString = remember { mutableStateOf("") }
-    val backColor: MutableState<Color> = remember { mutableStateOf(Color(255, 255, 255)) }
+    val backColor = remember { mutableStateOf(Color.White) }
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -51,8 +51,14 @@ fun DetailComponent(
         }
         TextField(
             modifier = Modifier.weight(1f),
-            value = frontText.value,
-            onValueChange = { frontText.value = it },
+            value = detail.front,
+            onValueChange = {
+                update(
+                    it,
+                    detail.back,
+                    detail.color
+                )
+            },
             label = { Text("表") }
         )
         Column(
@@ -62,13 +68,19 @@ fun DetailComponent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(
-                value = backColorString.value,
+                value = detail.color,
                 onValueChange = { field ->
-                    backColorString.value = field.take(6)
-                    if (backColorString.value.length != 6) {
+                    val tokenField = field.take(6)
+                    update(
+                        detail.front,
+                        detail.back,
+                        tokenField,
+                    )
+
+                    if (tokenField.length != 6) {
                         return@TextField
                     }
-                    val colorValue = backColorString.value
+                    val colorValue = tokenField
                         .chunked(2)
                         .map { chunked ->
                             try {
@@ -83,8 +95,14 @@ fun DetailComponent(
             )
 
             TextField(
-                value = backText.value,
-                onValueChange = { backText.value = it },
+                value = detail.back,
+                onValueChange = {
+                    update(
+                        detail.front,
+                        it,
+                        detail.color
+                    )
+                },
                 label = { Text("裏") },
                 modifier = Modifier.background(
                     color = backColor.value
@@ -93,9 +111,7 @@ fun DetailComponent(
         }
 
         Button(
-            onClick = {
-                // 削除処理
-            },
+            onClick = delete,
         ) {
             Text("-")
         }
