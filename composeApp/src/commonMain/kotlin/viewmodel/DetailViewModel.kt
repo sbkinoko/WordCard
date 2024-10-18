@@ -1,5 +1,8 @@
 package viewmodel
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.mongodb.kbson.ObjectId
@@ -13,12 +16,17 @@ class DetailViewModel : KoinComponent {
 
     val detailListState = detailRepository.detailListState
 
+    private val mutableTitleFlow: MutableStateFlow<String> = MutableStateFlow("")
+    val titleFlow: StateFlow<String> = mutableTitleFlow.asStateFlow()
+
     fun reset() {
         screenTypeRepository.screenType = null
+        mutableTitleFlow.value = ""
     }
 
     fun setId() {
         detailRepository.titleId = screenTypeRepository.screenType!!.id
+        mutableTitleFlow.value = screenTypeRepository.screenType!!.title
     }
 
     fun update(
