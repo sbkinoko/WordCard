@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 fun TopComponent(
     text: String,
     onClickDetail: () -> Unit,
+    onClickTest: () -> Unit,
     onClickDelete: () -> Unit,
     onEditText: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -29,7 +30,13 @@ fun TopComponent(
         Button(
             onClick = onClickDetail
         ) {
-            Text(text = "Detail")
+            Text(text = "Edit")
+        }
+
+        Button(
+            onClick = onClickTest,
+        ) {
+            Text(text = "Test")
         }
 
         Button(

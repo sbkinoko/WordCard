@@ -51,7 +51,12 @@ fun TopScreen(
                 TopComponent(
                     text = title.title,
                     onClickDetail = {
-                        topViewModel.onClick(
+                        topViewModel.toEdit(
+                            title = title,
+                        )
+                    },
+                    onClickTest = {
+                        topViewModel.toTest(
                             title = title,
                         )
                     },
@@ -65,7 +70,7 @@ fun TopScreen(
                             index,
                             newTitle
                         )
-                    }
+                    },
                 )
             }
         }
