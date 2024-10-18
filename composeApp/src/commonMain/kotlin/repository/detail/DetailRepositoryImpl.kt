@@ -17,14 +17,16 @@ import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
 class DetailRepositoryImpl : DetailRepository {
-    private val mutableRealmTitleFlow: MutableSharedFlow<List<Detail>> = MutableSharedFlow()
+    private val mutableRealmTitleFlow: MutableSharedFlow<List<Detail>> = MutableSharedFlow(
+        replay = 1,
+    )
     private val titleFlow: SharedFlow<List<Detail>> = mutableRealmTitleFlow.asSharedFlow()
 
     private val config: RealmConfiguration =
         RealmConfiguration.create(schema = setOf(RealmDetail::class))
     private val realm: Realm = Realm.open(config)
 
-    private var titleList: List<Detail> = emptyList()
+    private var detailList: List<Detail> = emptyList()
         set(value) {
             field = value
             CoroutineScope(Dispatchers.Default).launch {
@@ -35,17 +37,18 @@ class DetailRepositoryImpl : DetailRepository {
     override val detailListState: StateFlow<List<Detail>> = titleFlow.stateIn(
         scope = CoroutineScope(Dispatchers.Default),
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
-        initialValue = titleList,
+        initialValue = detailList,
     )
 
     override var titleId: ObjectId? = null
         set(value) {
             field = value
             if (value == null) {
-                titleList = emptyList()
+                detailList = emptyList()
+                return
             }
 
-            titleList = realm
+            detailList = realm
                 .query<RealmDetail>(
                     "titleId == $0", titleId
                 )
@@ -54,7 +57,7 @@ class DetailRepositoryImpl : DetailRepository {
                 .map {
                     it.toDetail()
                 }
-            println(titleList.size)
+            println(detailList.size)
         }
 
     override fun updateAt(
@@ -76,7 +79,7 @@ class DetailRepositoryImpl : DetailRepository {
             }
         }
 
-        titleList = titleList.map { detail ->
+        detailList = detailList.map { detail ->
             if (detail.id == id) {
                 detail.copy(
                     front = front,
@@ -98,13 +101,16 @@ class DetailRepositoryImpl : DetailRepository {
             }
             copyToRealm(detail)
 
-            val list = titleList + detail.toDetail()
-            titleList = list
+            val list = detailList + detail.toDetail()
+            detailList = list
         }
     }
 
     override fun deleteAt(id: ObjectId) {
-        val detail = realm.query<RealmDetail>("id == $0", id).first().find()
+        val detail = realm
+            .query<RealmDetail>("id == $0", id)
+            .first()
+            .find()
             ?: return
 
         realm.writeBlocking {
@@ -113,7 +119,7 @@ class DetailRepositoryImpl : DetailRepository {
             }
         }
 
-        titleList = titleList.filter {
+        detailList = detailList.filter {
             it.id != id
         }
     }
