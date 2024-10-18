@@ -18,7 +18,7 @@ val AppModule = module {
         TitleRepositoryImpl()
     }
 
-    factory<DetailRepository> {
+    single<DetailRepository> {
         DetailRepositoryImpl()
     }
 
@@ -26,7 +26,7 @@ val AppModule = module {
         TopViewModel()
     }
 
-    factory {
+    single {
         DetailViewModel()
     }
 
