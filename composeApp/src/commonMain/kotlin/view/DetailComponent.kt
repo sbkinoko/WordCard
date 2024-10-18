@@ -1,10 +1,14 @@
 package view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -14,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import domain.Detail
 
 @Composable
@@ -30,8 +35,14 @@ fun DetailComponent(
     }
 
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = RoundedCornerShape(5.dp)
+            ).padding(5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         Column(
             modifier = Modifier.fillMaxHeight(),
@@ -51,39 +62,42 @@ fun DetailComponent(
             )
             {
                 Text("+")
-
             }
         }
-        TextField(
-            modifier = Modifier.weight(1f),
-            value = detail.front,
-            onValueChange = {
-                update(
-                    it,
-                    detail.back,
-                    detail.color
-                )
-            },
-            label = { Text("表") }
-        )
+
         Column(
             modifier = Modifier
                 .wrapContentHeight()
                 .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             TextField(
+                modifier = Modifier.background(
+                    color = backColor.value
+                ),
                 value = detail.color,
                 onValueChange = { field ->
                     update(
                         detail.front,
                         detail.back,
-                        field.take( colorStringLength),
+                        field.take(colorStringLength),
                     )
-
                     backColor.value = field.toColor()
                 },
-                label = { Text("Color") }
+                label = { Text("Color") },
+            )
+
+            TextField(
+                value = detail.front,
+                onValueChange = {
+                    update(
+                        it,
+                        detail.back,
+                        detail.color
+                    )
+                },
+                label = { Text("表") }
             )
 
             TextField(
@@ -96,9 +110,6 @@ fun DetailComponent(
                     )
                 },
                 label = { Text("裏") },
-                modifier = Modifier.background(
-                    color = backColor.value
-                )
             )
         }
 
@@ -117,7 +128,7 @@ const val colorStringLength = 6
 
 fun String.toColor(): Color {
     val tokenField = this.take(colorStringLength)
-    if (tokenField.length != digit * colorStringLength) {
+    if (tokenField.length != colorStringLength) {
         return Color(ff, ff, ff)
     }
 

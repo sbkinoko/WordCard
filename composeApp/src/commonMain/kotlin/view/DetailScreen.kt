@@ -3,6 +3,7 @@ package view
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,8 @@ fun DetailScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val itemList = detailViewModel.detailListState.collectAsState()
+
+    val title = detailViewModel.titleFlow.collectAsState()
 
     LaunchedEffect(Unit) {
         detailViewModel.setId()
@@ -44,20 +48,14 @@ fun DetailScreen(
             }
             .padding(10.dp)
     ) {
-        Row {
-            Button(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp),
-                onClick = {
-                    detailViewModel.reset()
-                },
-            ) {
-                Text(
-                    "←"
-                )
-            }
-            Spacer(
-                modifier = Modifier.weight(1f)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 5.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = title.value
             )
         }
         LazyColumn(
@@ -94,6 +92,22 @@ fun DetailScreen(
             }
         ) {
             Text(text = "+")
+        }
+        Row {
+            Button(
+                modifier = Modifier
+                    .padding(horizontal = 10.dp),
+                onClick = {
+                    detailViewModel.reset()
+                },
+            ) {
+                Text(
+                    "←"
+                )
+            }
+            Spacer(
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
