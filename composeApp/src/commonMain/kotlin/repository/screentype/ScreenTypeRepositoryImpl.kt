@@ -16,13 +16,7 @@ class ScreenTypeRepositoryImpl : ScreenTypeRepository {
         scope = CoroutineScope(Dispatchers.Default),
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
         initialValue = null
-    ).also {
-        CoroutineScope(Dispatchers.Default).launch {
-            it.collect {
-                println()
-            }
-        }
-    }
+    )
 
     override var title: Title? = null
         set(value) {
@@ -40,13 +34,7 @@ class ScreenTypeRepositoryImpl : ScreenTypeRepository {
         scope = CoroutineScope(Dispatchers.Default),
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
         initialValue = ScreenType.EDIT
-    ).also {
-        CoroutineScope(Dispatchers.Default).launch {
-            it.collect {
-                println()
-            }
-        }
-    }
+    )
 
     override suspend fun setScreenType(screenType: ScreenType) {
         _screenType.emit(screenType)

@@ -38,13 +38,7 @@ class DetailRepositoryImpl : DetailRepository {
         scope = CoroutineScope(Dispatchers.Default),
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
         initialValue = detailList,
-    ).also {
-        CoroutineScope(Dispatchers.Default).launch {
-            it.collect {
-                println()
-            }
-        }
-    }
+    )
 
     override var titleId: ObjectId? = null
         set(value) {
