@@ -131,5 +131,7 @@ class TestViewModel : KoinComponent {
         if (matchList.all { it }) {
             showAnswer()
         }
+
+        _input.value = ""
     }
 }
