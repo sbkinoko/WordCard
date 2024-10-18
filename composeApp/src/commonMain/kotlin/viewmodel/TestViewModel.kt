@@ -1,5 +1,6 @@
 package viewmodel
 
+import domain.Constant
 import domain.Detail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +50,8 @@ class TestViewModel : KoinComponent {
         var sum = 0
         val questionList = list.map {
             // 誤答の数の2乗
-            val num = 11 - it.resultList.sum()
+            // ただし、全問正解していると出題されなくなるので1は加算する
+            val num = Constant.RESULT_LENGTH + 1 - it.resultList.sum()
             sum += num * num
             sum
         }

@@ -1,5 +1,6 @@
 package repository.detail
 
+import domain.Constant
 import domain.Detail
 import domain.RealmDetail
 import domain.toDetail
@@ -144,7 +145,9 @@ class DetailRepositoryImpl : DetailRepository {
             } else {
                 0
             }
-            val updatedList = list.takeLast(10)
+            val updatedList = list.takeLast(
+                Constant.RESULT_LENGTH
+            )
 
             findLatest(detail)?.apply {
                 resultList = updatedList.toRealmList()
@@ -153,7 +156,7 @@ class DetailRepositoryImpl : DetailRepository {
             detailList = detailList.map { detailItem ->
                 if (detailItem.id == id) {
                     detailItem.copy(
-                        resultList = list.takeLast(10)
+                        resultList = updatedList
                     )
                 } else {
                     detailItem
