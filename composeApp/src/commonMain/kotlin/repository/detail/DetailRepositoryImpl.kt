@@ -26,6 +26,9 @@ class DetailRepositoryImpl : DetailRepository {
         RealmConfiguration.create(schema = setOf(RealmDetail::class))
     private val realm: Realm = Realm.open(config)
 
+    override val list: List<Detail>
+        get() = detailList
+
     private var detailList: List<Detail> = emptyList()
         set(value) {
             field = value

@@ -1,5 +1,6 @@
 package view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -25,9 +27,11 @@ fun TestScreen(
     testViewModel: TestViewModel = koinInject(),
 ) {
     val text = remember { mutableStateOf("") }
-    val flag = remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
+
+    val question = testViewModel.question.collectAsState()
+    val showAnswer = testViewModel.showAnswer.collectAsState()
 
     Column(
         modifier = modifier
@@ -41,13 +45,28 @@ fun TestScreen(
     ) {
         Text(
             modifier = Modifier
-                .weight(1f),
-            text = "出題"
+                .weight(1f)
+                .fillMaxWidth(),
+            text = question.value.front
         )
         Text(
             modifier = Modifier
-                .weight(1f),
-            text = "回答"
+                .weight(1f)
+                .fillMaxWidth()
+                .then(
+                    if (showAnswer.value) {
+                        Modifier.background(
+                            color = question.value.color.toColor()
+                        )
+                    } else {
+                        Modifier
+                    }
+                ),
+            text = if (showAnswer.value) {
+                question.value.back
+            } else {
+                ""
+            },
         )
         Row(
             modifier = Modifier
@@ -67,29 +86,29 @@ fun TestScreen(
                     .weight(1f)
                     .fillMaxHeight(),
                 onClick = {
-                    println(text.value)
+
                 }
             ) {
                 Text("一部表示")
             }
         }
-        if (flag.value) {
+        if (showAnswer.value) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    flag.value = flag.value.not()
+                    testViewModel.goNext()
                 }
             ) {
-                Text("全部表示")
+                Text("次へ")
             }
         } else {
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    flag.value = flag.value.not()
+                    testViewModel.showAnswer()
                 }
             ) {
-                Text("次へ")
+                Text("全部表示")
             }
         }
     }

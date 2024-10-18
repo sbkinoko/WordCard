@@ -6,6 +6,7 @@ import org.mongodb.kbson.ObjectId
 
 interface DetailRepository {
     val detailListState: StateFlow<List<Detail>>
+    val list: List<Detail>
 
     var titleId: ObjectId?
 
