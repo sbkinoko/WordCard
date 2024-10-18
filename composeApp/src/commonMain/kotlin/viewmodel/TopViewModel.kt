@@ -1,5 +1,6 @@
 package viewmodel
 
+import domain.Title
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.screentype.ScreenTypeRepository
@@ -11,8 +12,8 @@ class TopViewModel : KoinComponent {
 
     val titleFlow = titleRepository.titleState
 
-    fun onClick(text: String) {
-        screenTypeRepository.screenType = text
+    fun onClick(title: Title) {
+        screenTypeRepository.screenType = title
     }
 
     fun addGroup() {
