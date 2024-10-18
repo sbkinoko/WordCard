@@ -1,9 +1,13 @@
 package viewmodel
 
 import domain.Detail
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.detail.DetailRepository
@@ -35,14 +39,28 @@ class TestViewModel : KoinComponent {
         mutableQuestion = MutableStateFlow(
             list[0]
         )
-        matchList = MutableList(mutableQuestion.value.back.length) { false }
+        reset()
     }
 
     fun reset() {
         _showAnswer.value = false
         _input.value = ""
         list = detailRepository.list
-        mutableQuestion.value = list[0]
+        var sum = 0
+        val questionList = list.map {
+            // 誤答の数の2乗
+            val num = 11 - it.resultList.sum()
+            sum += num * num
+            sum
+        }
+
+        val num = Random.nextInt(sum)
+        for (i in questionList.indices) {
+            if (num < questionList[i]) {
+                mutableQuestion.value = list[i]
+                break
+            }
+        }
         matchList = MutableList(mutableQuestion.value.back.length) { false }
     }
 
@@ -55,18 +73,30 @@ class TestViewModel : KoinComponent {
     }
 
     fun goOK() {
-        go()
+        CoroutineScope(Dispatchers.Default).launch {
+            detailRepository.updateResult(
+                id = question.value.id,
+                result = true,
+            )
+            delay(50)
+            go()
+        }
     }
 
     fun goNG() {
-        go()
+        CoroutineScope(Dispatchers.Default).launch {
+            detailRepository.updateResult(
+                id = question.value.id,
+                result = false,
+            )
+            delay(50)
+            go()
+        }
     }
 
     private fun go() {
         _showAnswer.value = false
-        mutableQuestion.value = list[Random.nextInt(list.size)]
-        matchList = MutableList(mutableQuestion.value.back.length) { false }
-
+        reset()
     }
 
     fun open() {

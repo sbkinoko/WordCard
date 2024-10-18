@@ -24,4 +24,9 @@ interface DetailRepository {
     fun deleteAt(
         id: ObjectId,
     )
+
+    fun updateResult(
+        id: ObjectId,
+        result: Boolean,
+    )
 }
