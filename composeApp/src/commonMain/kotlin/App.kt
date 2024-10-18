@@ -3,7 +3,6 @@ import androidx.compose.runtime.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import repository.screentype.ScreenTypeRepository
-import repository.screentype.ScreenTypeRepositoryImpl
 import view.DetailScreen
 import view.TopScreen
 
@@ -11,10 +10,10 @@ import view.TopScreen
 @Preview
 fun App() {
     val screenTypeRepository: ScreenTypeRepository = koinInject()
-    val screenState =
-        screenTypeRepository.screenTypeFlow.collectAsState(null)
+    val title =
+        screenTypeRepository.titleFlow.collectAsState(null)
     MaterialTheme {
-        if (screenState.value == null) {
+        if (title.value == null) {
             TopScreen()
         } else {
             DetailScreen()

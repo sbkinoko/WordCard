@@ -1,6 +1,10 @@
 package viewmodel
 
+import domain.ScreenType
 import domain.Title
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.screentype.ScreenTypeRepository
@@ -12,8 +16,18 @@ class TopViewModel : KoinComponent {
 
     val titleFlow = titleRepository.titleState
 
-    fun onClick(title: Title) {
-        screenTypeRepository.screenType = title
+    fun toEdit(title: Title) {
+        CoroutineScope(Dispatchers.Default).launch {
+            screenTypeRepository.setScreenType(ScreenType.EDIT)
+            screenTypeRepository.title = title
+        }
+    }
+
+    fun toTest(title: Title) {
+        CoroutineScope(Dispatchers.Default).launch {
+            screenTypeRepository.setScreenType(ScreenType.TEST)
+            screenTypeRepository.title = title
+        }
     }
 
     fun addGroup() {
