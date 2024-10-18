@@ -51,7 +51,9 @@ fun TopScreen(
                 TopComponent(
                     text = title.title,
                     onClickDetail = {
-                        topViewModel.onClick("Hello world")
+                        topViewModel.onClick(
+                            title = title,
+                        )
                     },
                     onClickDelete = {
                         topViewModel.deleteAt(

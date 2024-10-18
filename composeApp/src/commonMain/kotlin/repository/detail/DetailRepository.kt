@@ -7,7 +7,11 @@ import org.mongodb.kbson.ObjectId
 interface DetailRepository {
     val detailListState: StateFlow<List<Detail>>
 
-    fun add()
+    var titleId: ObjectId?
+
+    fun add(
+        titleId: ObjectId,
+    )
 
     fun updateAt(
         id: ObjectId,

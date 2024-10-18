@@ -1,8 +1,9 @@
 package repository.screentype
 
+import domain.Title
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 interface ScreenTypeRepository {
-    val screenTypeFlow: MutableSharedFlow<String?>
-    var screenType: String?
+    val screenTypeFlow: MutableSharedFlow<Title?>
+    var screenType: Title?
 }

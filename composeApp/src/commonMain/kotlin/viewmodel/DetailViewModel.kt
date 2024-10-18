@@ -17,6 +17,10 @@ class DetailViewModel : KoinComponent {
         screenTypeRepository.screenType = null
     }
 
+    fun setId() {
+        detailRepository.titleId = screenTypeRepository.screenType!!.id
+    }
+
     fun update(
         id: ObjectId,
         front: String,
@@ -32,7 +36,9 @@ class DetailViewModel : KoinComponent {
     }
 
     fun add() {
-        detailRepository.add()
+        detailRepository.add(
+            titleId = screenTypeRepository.screenType!!.id,
+        )
     }
 
     fun delete(id: ObjectId) {
