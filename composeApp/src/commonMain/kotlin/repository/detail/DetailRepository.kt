@@ -6,6 +6,7 @@ import org.mongodb.kbson.ObjectId
 
 interface DetailRepository {
     val detailListState: StateFlow<List<Detail>>
+    val list: List<Detail>
 
     var titleId: ObjectId?
 
@@ -22,5 +23,10 @@ interface DetailRepository {
 
     fun deleteAt(
         id: ObjectId,
+    )
+
+    fun updateResult(
+        id: ObjectId,
+        result: Boolean,
     )
 }

@@ -1,11 +1,13 @@
 package repository.detail
 
+import domain.Constant
 import domain.Detail
 import domain.RealmDetail
 import domain.toDetail
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.ext.toRealmList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,6 +27,9 @@ class DetailRepositoryImpl : DetailRepository {
     private val config: RealmConfiguration =
         RealmConfiguration.create(schema = setOf(RealmDetail::class))
     private val realm: Realm = Realm.open(config)
+
+    override val list: List<Detail>
+        get() = detailList
 
     private var detailList: List<Detail> = emptyList()
         set(value) {
@@ -121,6 +126,42 @@ class DetailRepositoryImpl : DetailRepository {
 
         detailList = detailList.filter {
             it.id != id
+        }
+    }
+
+    override fun updateResult(
+        id: ObjectId,
+        result: Boolean
+    ) {
+        realm.writeBlocking {
+            val detail = realm
+                .query<RealmDetail>("id == $0", id)
+                .first()
+                .find()
+                ?: return@writeBlocking
+
+            val list = detail.resultList + if (result) {
+                1
+            } else {
+                0
+            }
+            val updatedList = list.takeLast(
+                Constant.RESULT_LENGTH
+            )
+
+            findLatest(detail)?.apply {
+                resultList = updatedList.toRealmList()
+            }
+
+            detailList = detailList.map { detailItem ->
+                if (detailItem.id == id) {
+                    detailItem.copy(
+                        resultList = updatedList
+                    )
+                } else {
+                    detailItem
+                }
+            }.toMutableList()
         }
     }
 }
