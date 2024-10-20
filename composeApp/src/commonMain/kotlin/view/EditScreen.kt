@@ -3,7 +3,7 @@ package view
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -32,10 +32,11 @@ fun EditScreen(
         verticalArrangement = Arrangement.spacedBy(5.dp),
         state = listState,
     ) {
-        items(
+        itemsIndexed(
             itemList.value
-        ) {
+        ) { index, it ->
             DetailComponent(
+                index = index,
                 detail = it,
                 update = { front, back, color ->
                     detailViewModel.update(
