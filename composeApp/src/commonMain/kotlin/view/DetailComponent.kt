@@ -13,10 +13,12 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import domain.Detail
@@ -32,6 +34,23 @@ fun DetailComponent(
         mutableStateOf(
             detail.color.toColor()
         )
+    }
+
+    val front = remember {
+        mutableStateOf(detail.front)
+    }
+    val back = remember {
+        mutableStateOf(detail.back)
+    }
+    val color = remember {
+        mutableStateOf(detail.color)
+    }
+
+    LaunchedEffect(detail) {
+        front.value = detail.front
+        back.value = detail.back
+        color.value = detail.color
+        backColor.value = detail.color.toColor()
     }
 
     Row(
@@ -75,41 +94,49 @@ fun DetailComponent(
             TextField(
                 modifier = Modifier.background(
                     color = backColor.value
-                ),
-                value = detail.color,
-                onValueChange = { field ->
+                ).onFocusChanged {
                     update(
                         detail.front,
                         detail.back,
-                        field.take(colorStringLength),
+                        color.value,
                     )
+                },
+                value = color.value,
+                onValueChange = { field ->
+                    color.value = field.take(colorStringLength)
                     backColor.value = field.toColor()
                 },
                 label = { Text("Color") },
             )
 
             TextField(
-                value = detail.front,
-                onValueChange = {
+                modifier = Modifier.onFocusChanged {
                     update(
-                        it,
+                        front.value,
                         detail.back,
-                        detail.color
+                        detail.color,
                     )
+                },
+                value = front.value,
+                onValueChange = {
+                    front.value = it
                 },
                 label = { Text("表") }
             )
 
             TextField(
-                value = detail.back,
+                value = back.value,
                 onValueChange = {
-                    update(
-                        detail.front,
-                        it,
-                        detail.color
-                    )
+                    back.value = it
                 },
                 label = { Text("裏") },
+                modifier = Modifier.onFocusChanged {
+                    update(
+                        detail.front,
+                        back.value,
+                        detail.color
+                    )
+                }
             )
         }
 
