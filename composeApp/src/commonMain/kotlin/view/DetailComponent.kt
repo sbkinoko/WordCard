@@ -101,12 +101,12 @@ fun DetailComponent(
                         color.value,
                     )
                 },
+                label = { Text("Color") },
                 value = color.value,
                 onValueChange = { field ->
                     color.value = field.take(colorStringLength)
                     backColor.value = field.toColor()
                 },
-                label = { Text("Color") },
             )
 
             TextField(
@@ -117,26 +117,26 @@ fun DetailComponent(
                         detail.color,
                     )
                 },
+                label = { Text("表") },
                 value = front.value,
                 onValueChange = {
                     front.value = it
                 },
-                label = { Text("表") }
             )
 
             TextField(
-                value = back.value,
-                onValueChange = {
-                    back.value = it
-                },
-                label = { Text("裏") },
                 modifier = Modifier.onFocusChanged {
                     update(
                         detail.front,
                         back.value,
                         detail.color
                     )
-                }
+                },
+                label = { Text("裏") },
+                value = back.value,
+                onValueChange = {
+                    back.value = it
+                },
             )
         }
 
