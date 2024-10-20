@@ -4,12 +4,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import viewmodel.DetailViewModel
 
@@ -20,9 +25,12 @@ fun EditScreen(
 ) {
     val itemList = detailViewModel.detailListState.collectAsState()
 
+    val listState = rememberLazyListState()
+
     LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(5.dp)
+        verticalArrangement = Arrangement.spacedBy(5.dp),
+        state = listState,
     ) {
         items(
             itemList.value
@@ -45,12 +53,20 @@ fun EditScreen(
             )
         }
     }
+
     Button(
         modifier = Modifier
             .fillMaxWidth(),
         onClick = {
-            detailViewModel.add()
-        }
+            CoroutineScope(Dispatchers.Main).launch {
+                val index = listState.layoutInfo.totalItemsCount
+                detailViewModel.add()
+                delay(100)
+                listState.scrollToItem(
+                    index = index,
+                )
+            }
+        },
     ) {
         Text(text = "+")
     }
