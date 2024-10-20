@@ -25,6 +25,7 @@ import domain.Detail
 
 @Composable
 fun DetailComponent(
+    index: Int,
     detail: Detail,
     update: (front: String, back: String, color: String) -> Unit,
     delete: () -> Unit,
@@ -65,7 +66,8 @@ fun DetailComponent(
     ) {
         Column(
             modifier = Modifier.fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Button(
                 onClick = {
@@ -74,6 +76,11 @@ fun DetailComponent(
             ) {
                 Text("+")
             }
+
+            Text(
+                text = index.toString()
+            )
+
             Button(
                 onClick = {
                     // 下に追加処理
