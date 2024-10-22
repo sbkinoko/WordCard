@@ -18,13 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import org.koin.compose.koinInject
 import viewmodel.TestViewModel
 
 @Composable
 fun TestScreen(
     modifier: Modifier = Modifier,
-    testViewModel: TestViewModel = koinInject(),
+    testViewModel: TestViewModel ,
 ) {
     val focusManager = LocalFocusManager.current
 

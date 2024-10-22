@@ -35,10 +35,20 @@ class TestViewModel : KoinComponent {
     private val _input = MutableStateFlow("")
     val input: StateFlow<String> = _input.asStateFlow()
 
+    var questionId: Int = 0
+
     init {
         list = detailRepository.list
+        // repositoryかcallbackを用意する
         mutableQuestion = MutableStateFlow(
-            list[0]
+            Detail(
+                id = org.mongodb.kbson.ObjectId(),
+                titleId = org.mongodb.kbson.ObjectId(),
+                front = "",
+                back = "",
+                color = "",
+                resultList = listOf(0),
+            )
         )
         reset()
     }
@@ -49,6 +59,11 @@ class TestViewModel : KoinComponent {
         _answer.value = ""
 
         list = detailRepository.list
+
+        if (list.isEmpty()) {
+            return
+        }
+
         var sum = 0
         val questionList = list.map {
             // 誤答の数の2乗
@@ -61,10 +76,11 @@ class TestViewModel : KoinComponent {
         val num = Random.nextInt(sum)
         for (i in questionList.indices) {
             if (num < questionList[i]) {
-                mutableQuestion.value = list[i]
+                questionId = i
                 break
             }
         }
+        mutableQuestion.value = list[questionId]
         matchList = MutableList(mutableQuestion.value.back.length) { false }
     }
 
