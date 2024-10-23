@@ -9,8 +9,11 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -23,6 +26,10 @@ fun TopComponent(
     onEditText: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val title = remember {
+        mutableStateOf(text)
+    }
+
     Row(
         modifier = modifier
             .border(
@@ -35,9 +42,20 @@ fun TopComponent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
-            modifier = Modifier.weight(1f),
-            value = text,
-            onValueChange = onEditText,
+            modifier = Modifier
+                .weight(1f)
+                .onFocusChanged {
+                    if (it.isFocused) {
+                        return@onFocusChanged
+                    }
+                    onEditText(
+                        title.value
+                    )
+                },
+            value = title.value,
+            onValueChange = {
+                title.value = it
+            },
         )
         Button(
             onClick = onClickDetail
