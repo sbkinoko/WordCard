@@ -1,4 +1,4 @@
-package view
+package view.top
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement

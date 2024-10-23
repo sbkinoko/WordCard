@@ -1,4 +1,4 @@
-package view
+package view.top
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
-import viewmodel.TopViewModel
+import viewmodel.top.TopViewModel
 
 @Composable
 fun TopScreen(

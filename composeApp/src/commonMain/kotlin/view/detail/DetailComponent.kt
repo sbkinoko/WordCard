@@ -1,4 +1,4 @@
-package view
+package view.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

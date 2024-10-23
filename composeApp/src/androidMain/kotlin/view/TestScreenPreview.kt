@@ -2,7 +2,8 @@ package view
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import viewmodel.TestViewModel
+import view.detail.TestScreen
+import viewmodel.detail.TestViewModel
 
 @Preview
 @Composable

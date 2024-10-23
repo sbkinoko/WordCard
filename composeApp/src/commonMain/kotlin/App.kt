@@ -3,8 +3,8 @@ import androidx.compose.runtime.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import repository.screentype.ScreenTypeRepository
-import view.DetailScreen
-import view.TopScreen
+import view.detail.DetailScreen
+import view.top.TopScreen
 
 @Composable
 @Preview
