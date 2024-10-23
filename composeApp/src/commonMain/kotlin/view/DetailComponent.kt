@@ -106,13 +106,15 @@ fun DetailComponent(
                     .background(
                         color = backColor.value
                     ).onFocusChanged {
-                        if (it.isFocused.not().not()) {
-                            update(
-                                detail.front,
-                                detail.back,
-                                color.value,
-                            )
+                        if (it.isFocused) {
+                            return@onFocusChanged
                         }
+
+                        update(
+                            detail.front,
+                            detail.back,
+                            color.value,
+                        )
                     },
                 label = { Text("Color") },
                 value = color.value,
@@ -125,13 +127,15 @@ fun DetailComponent(
             TextField(
                 modifier = Modifier
                     .onFocusChanged {
-                        if (it.isFocused.not()) {
-                            update(
-                                front.value,
-                                detail.back,
-                                detail.color,
-                            )
+                        if (it.isFocused) {
+                            return@onFocusChanged
                         }
+
+                        update(
+                            front.value,
+                            detail.back,
+                            detail.color,
+                        )
                     }.onKeyEvent {
                         //　改行したらイベントを消費して何も起こさない
                         it.key.keyCode == Key.Enter.keyCode
@@ -146,13 +150,15 @@ fun DetailComponent(
             TextField(
                 modifier = Modifier
                     .onFocusChanged {
-                        if (it.isFocused.not().not()) {
-                            update(
-                                detail.front,
-                                back.value,
-                                detail.color
-                            )
+                        if (it.isFocused) {
+                            return@onFocusChanged
                         }
+
+                        update(
+                            detail.front,
+                            back.value,
+                            detail.color
+                        )
                     }.onKeyEvent {
                         //　改行したらイベントを消費して何も起こさない
                         it.key.keyCode == Key.Enter.keyCode
