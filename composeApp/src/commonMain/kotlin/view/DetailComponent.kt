@@ -123,15 +123,19 @@ fun DetailComponent(
             )
 
             TextField(
-                modifier = Modifier.onFocusChanged {
-                    if (it.isFocused.not()) {
-                        update(
-                            front.value,
-                            detail.back,
-                            detail.color,
-                        )
-                    }
-                },
+                modifier = Modifier
+                    .onFocusChanged {
+                        if (it.isFocused.not()) {
+                            update(
+                                front.value,
+                                detail.back,
+                                detail.color,
+                            )
+                        }
+                    }.onKeyEvent {
+                        //　改行したらイベントを消費して何も起こさない
+                        it.key.keyCode == Key.Enter.keyCode
+                    },
                 label = { Text("表") },
                 value = front.value,
                 onValueChange = {
@@ -140,18 +144,19 @@ fun DetailComponent(
             )
 
             TextField(
-                modifier = Modifier.onFocusChanged {
-                    if (it.isFocused.not().not()) {
-                        update(
-                            detail.front,
-                            back.value,
-                            detail.color
-                        )
-                    }
-                }.onKeyEvent {
-                    //　改行したらイベントを消費して何も起こさない
-                    it.key.keyCode == Key.Enter.keyCode
-                },
+                modifier = Modifier
+                    .onFocusChanged {
+                        if (it.isFocused.not().not()) {
+                            update(
+                                detail.front,
+                                back.value,
+                                detail.color
+                            )
+                        }
+                    }.onKeyEvent {
+                        //　改行したらイベントを消費して何も起こさない
+                        it.key.keyCode == Key.Enter.keyCode
+                    },
                 label = { Text("裏") },
                 value = back.value,
                 onValueChange = {
