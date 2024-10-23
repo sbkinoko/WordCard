@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import common.Const
 import domain.ScreenType
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
@@ -64,15 +65,19 @@ fun DetailScreen(
             ) {
                 focusManager.clearFocus()
             }
+            .background(
+                color = Const.Color.backgroundColor
+            )
             .imePadding()
             .safeDrawingPadding()
-            .padding(10.dp)
+            .padding(10.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         if (flag.value) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 5.dp),
+                    .padding(5.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
