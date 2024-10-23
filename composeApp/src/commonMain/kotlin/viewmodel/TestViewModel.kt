@@ -46,6 +46,8 @@ class TestViewModel : KoinComponent {
     fun reset() {
         _showAnswer.value = false
         _input.value = ""
+        _answer.value = ""
+
         list = detailRepository.list
         var sum = 0
         val questionList = list.map {
@@ -124,7 +126,11 @@ class TestViewModel : KoinComponent {
             if (flag) {
                 question.value.back[index].toString()
             } else {
-                "　"
+                if (question.value.back[index].toString() == "\n") {
+                    question.value.back[index].toString()
+                } else {
+                    "　"
+                }
             }
         }.joinToString("")
 
