@@ -23,6 +23,7 @@ import viewmodel.TestViewModel
 
 @Composable
 fun TestScreen(
+    setJumpTarget: (Int) -> Unit ,
     modifier: Modifier = Modifier,
     testViewModel: TestViewModel = koinInject(),
 ) {
@@ -36,6 +37,10 @@ fun TestScreen(
     LaunchedEffect(Unit) {
         testViewModel.reset()
     }
+
+    setJumpTarget(
+        testViewModel.questionId
+    )
 
     Column(
         modifier = modifier

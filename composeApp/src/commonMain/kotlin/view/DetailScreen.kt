@@ -39,9 +39,12 @@ fun DetailScreen(
     val screenType = detailViewModel.screenType.collectAsState()
     val title = detailViewModel.titleFlow.collectAsState()
 
-
     val flag = remember {
         mutableStateOf(false)
+    }
+
+    val jumpState = remember {
+        mutableStateOf(0)
     }
 
     LaunchedEffect(Unit) {
@@ -80,11 +83,15 @@ fun DetailScreen(
                 EditScreen(
                     modifier = Modifier
                         .weight(1f),
+                    jumpTo = jumpState.value
                 )
             } else if (screenType.value == ScreenType.TEST) {
                 TestScreen(
                     modifier = Modifier
                         .weight(1f),
+                    setJumpTarget = {
+                        jumpState.value = it
+                    }
                 )
             }
         } else {

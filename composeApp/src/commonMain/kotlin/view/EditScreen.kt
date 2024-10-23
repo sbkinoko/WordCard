@@ -12,6 +12,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,7 +29,8 @@ import viewmodel.DetailViewModel
 @Composable
 fun EditScreen(
     modifier: Modifier = Modifier,
-    detailViewModel: DetailViewModel = koinInject()
+    detailViewModel: DetailViewModel = koinInject(),
+    jumpTo: Int = 0,
 ) {
     val itemList = detailViewModel.detailListState.collectAsState()
 
@@ -36,6 +38,20 @@ fun EditScreen(
 
     val idString = remember {
         mutableStateOf("")
+    }
+
+    LaunchedEffect(jumpTo) {
+        if (jumpTo < 0) {
+            return@LaunchedEffect
+        }
+
+        if (jumpTo >= itemList.value.size) {
+            return@LaunchedEffect
+        }
+
+        listState.scrollToItem(
+            index = jumpTo,
+        )
     }
 
     LazyColumn(
