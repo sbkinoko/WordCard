@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -103,15 +102,18 @@ fun DetailComponent(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             TextField(
-                modifier = Modifier.background(
-                    color = backColor.value
-                ).onFocusChanged {
-                    update(
-                        detail.front,
-                        detail.back,
-                        color.value,
-                    )
-                },
+                modifier = Modifier
+                    .background(
+                        color = backColor.value
+                    ).onFocusChanged {
+                        if (it.isFocused.not().not()) {
+                            update(
+                                detail.front,
+                                detail.back,
+                                color.value,
+                            )
+                        }
+                    },
                 label = { Text("Color") },
                 value = color.value,
                 onValueChange = { field ->
@@ -122,11 +124,13 @@ fun DetailComponent(
 
             TextField(
                 modifier = Modifier.onFocusChanged {
-                    update(
-                        front.value,
-                        detail.back,
-                        detail.color,
-                    )
+                    if (it.isFocused.not()) {
+                        update(
+                            front.value,
+                            detail.back,
+                            detail.color,
+                        )
+                    }
                 },
                 label = { Text("表") },
                 value = front.value,
@@ -137,11 +141,13 @@ fun DetailComponent(
 
             TextField(
                 modifier = Modifier.onFocusChanged {
-                    update(
-                        detail.front,
-                        back.value,
-                        detail.color
-                    )
+                    if (it.isFocused.not().not()) {
+                        update(
+                            detail.front,
+                            back.value,
+                            detail.color
+                        )
+                    }
                 }.onKeyEvent {
                     //　改行したらイベントを消費して何も起こさない
                     it.key.keyCode == Key.Enter.keyCode
@@ -151,12 +157,6 @@ fun DetailComponent(
                 onValueChange = {
                     back.value = it
                 },
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        println("")
-                    },
-
-                    )
             )
         }
 
