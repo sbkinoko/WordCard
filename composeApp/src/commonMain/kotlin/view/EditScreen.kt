@@ -76,9 +76,13 @@ fun EditScreen(
         },
         onClick = {
             CoroutineScope(Dispatchers.Main).launch {
+                val num = idString.value.toIntOrNull()
+
                 idString.value = ""
 
-                val num = idString.value.toIntOrNull() ?: return@launch
+                if (num == null) {
+                    return@launch
+                }
 
                 if (num < 0) {
                     return@launch
