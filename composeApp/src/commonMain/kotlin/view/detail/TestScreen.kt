@@ -6,8 +6,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -16,8 +19,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import common.commonBorder
+import common.componentBackground
 import org.koin.compose.koinInject
 import viewmodel.detail.TestViewModel
 
@@ -54,32 +60,46 @@ fun TestScreen(
     ) {
         Text(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
+                .weight(2f)
+                .fillMaxWidth()
+                .commonBorder()
+                .componentBackground(),
             text = question.value.front
         )
+
+        ColorArea(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            color = if (
+                showAnswer.value
+            ) {
+                question.value.color.toColor()
+            } else {
+                Color.White
+            }
+        )
+
         Text(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .then(
-                    if (showAnswer.value) {
-                        Modifier.background(
-                            color = question.value.color.toColor()
-                        )
-                    } else {
-                        Modifier
-                    }
-                ),
+                .commonBorder()
+                .componentBackground(),
             text = if (showAnswer.value) {
                 question.value.back
             } else {
                 answer.value
             },
         )
+
         Row(
             modifier = Modifier
-                .weight(1f)
+                .weight(2f)
+                .commonBorder()
+                .componentBackground()
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             TextField(
                 modifier = Modifier
@@ -139,5 +159,40 @@ fun TestScreen(
                 Text("全部表示")
             }
         }
+    }
+}
+
+@Composable
+fun ColorArea(
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
+
+        Spacer(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .commonBorder()
+                .background(
+                    color = color,
+                    RoundedCornerShape(5.dp)
+                )
+        )
+        Spacer(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .commonBorder(
+                    color = Color.White,
+                )
+                .background(
+                    color = color,
+                    shape = RoundedCornerShape(5.dp)
+                )
+        )
     }
 }
