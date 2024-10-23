@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -65,8 +66,9 @@ fun DetailScreen(
             ) {
                 focusManager.clearFocus()
             }
-            .padding(10.dp)
             .imePadding()
+            .safeDrawingPadding()
+            .padding(10.dp)
     ) {
         if (flag.value) {
             Box(
