@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.Button
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,99 +53,105 @@ fun DetailScreen(
         flag.value = true
     }
 
-    Column(
+    Scaffold(
         modifier = modifier
             .fillMaxSize()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-            ) {
-                focusManager.clearFocus()
-            }
-            .padding(10.dp)
             .imePadding()
+            .safeDrawingPadding()
     ) {
-        if (flag.value) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 5.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = title.value
-                )
-            }
-            if (screenType.value == ScreenType.EDIT) {
-                EditScreen(
-                    modifier = Modifier
-                        .weight(1f),
-                )
-            } else if (screenType.value == ScreenType.TEST) {
-                TestScreen(
-                    modifier = Modifier
-                        .weight(1f),
-                )
-            }
-        } else {
-            Spacer(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(
-                        color = Color(
-                            alpha = 80,
-                            red = 0,
-                            green = 0,
-                            blue = 0,
-                        )
-                    )
-            )
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) {
+                    focusManager.clearFocus()
+                }
+                .padding(10.dp)
         ) {
-            Button(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp),
-                onClick = {
-                    detailViewModel.reset()
-                },
-            ) {
-                Text(
-                    "←"
+            if (flag.value) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 5.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = title.value
+                    )
+                }
+                if (screenType.value == ScreenType.EDIT) {
+                    EditScreen(
+                        modifier = Modifier
+                            .weight(1f),
+                    )
+                } else if (screenType.value == ScreenType.TEST) {
+                    TestScreen(
+                        modifier = Modifier
+                            .weight(1f),
+                    )
+                }
+            } else {
+                Spacer(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .background(
+                            color = Color(
+                                alpha = 80,
+                                red = 0,
+                                green = 0,
+                                blue = 0,
+                            )
+                        )
                 )
             }
 
-            when (screenType.value) {
-                ScreenType.EDIT -> {
-                    Button(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 10.dp),
-                        onClick = {
-                            detailViewModel.toTest()
-                        },
-                    ) {
-                        Text(
-                            "Test"
-                        )
-                    }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Button(
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp),
+                    onClick = {
+                        detailViewModel.reset()
+                    },
+                ) {
+                    Text(
+                        "←"
+                    )
                 }
 
-                ScreenType.TEST -> {
-                    Button(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 10.dp),
-                        onClick = {
-                            detailViewModel.toEdit()
+                when (screenType.value) {
+                    ScreenType.EDIT -> {
+                        Button(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 10.dp),
+                            onClick = {
+                                detailViewModel.toTest()
+                            },
+                        ) {
+                            Text(
+                                "Test"
+                            )
                         }
-                    ) {
-                        Text(
-                            "Edit"
-                        )
+                    }
+
+                    ScreenType.TEST -> {
+                        Button(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 10.dp),
+                            onClick = {
+                                detailViewModel.toEdit()
+                            }
+                        ) {
+                            Text(
+                                "Edit"
+                            )
+                        }
                     }
                 }
             }
