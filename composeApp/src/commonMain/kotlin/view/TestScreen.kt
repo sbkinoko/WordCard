@@ -18,12 +18,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 import viewmodel.TestViewModel
 
 @Composable
 fun TestScreen(
+    setJumpTarget: (Int) -> Unit ,
     modifier: Modifier = Modifier,
-    testViewModel: TestViewModel ,
+    testViewModel: TestViewModel = koinInject(),
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -35,6 +37,10 @@ fun TestScreen(
     LaunchedEffect(Unit) {
         testViewModel.reset()
     }
+
+    setJumpTarget(
+        testViewModel.questionId
+    )
 
     Column(
         modifier = modifier

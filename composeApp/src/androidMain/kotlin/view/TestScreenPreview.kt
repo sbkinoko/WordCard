@@ -9,5 +9,6 @@ import viewmodel.TestViewModel
 fun TestScreenPreview() {
     TestScreen(
         testViewModel = TestViewModel(),
+        setJumpTarget = {}
     )
 }

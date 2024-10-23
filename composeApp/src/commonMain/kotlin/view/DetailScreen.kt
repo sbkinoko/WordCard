@@ -29,13 +29,11 @@ import domain.ScreenType
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 import viewmodel.DetailViewModel
-import viewmodel.TestViewModel
 
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
     detailViewModel: DetailViewModel = koinInject(),
-    testViewModel: TestViewModel = koinInject(),
 ) {
     val focusManager = LocalFocusManager.current
     val screenType = detailViewModel.screenType.collectAsState()
@@ -91,7 +89,9 @@ fun DetailScreen(
                 TestScreen(
                     modifier = Modifier
                         .weight(1f),
-                    testViewModel = testViewModel,
+                    setJumpTarget = {
+                        jumpState.value = it
+                    }
                 )
             }
         } else {
@@ -147,7 +147,6 @@ fun DetailScreen(
                             .weight(1f)
                             .padding(horizontal = 10.dp),
                         onClick = {
-                            jumpState.value = testViewModel.questionId
                             detailViewModel.toEdit()
                         }
                     ) {
