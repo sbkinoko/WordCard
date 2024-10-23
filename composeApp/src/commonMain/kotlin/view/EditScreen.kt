@@ -66,51 +66,37 @@ fun EditScreen(
         }
     }
 
-    Row(
+    NumberAndButton(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-    ) {
-        TextField(
-            modifier = Modifier
-                .weight(1f),
-            value = idString.value,
-            onValueChange = {
-                idString.value = it
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number
-            ),
-        )
+        value = idString.value,
+        onValueChange = {
+            idString.value = it
+        },
+        onClick = {
+            CoroutineScope(Dispatchers.Main).launch {
+                idString.value = ""
 
-        Button(
-            onClick = {
-                CoroutineScope(Dispatchers.Main).launch {
-                    idString.value.toIntOrNull()?.let {
-                        idString.value = ""
+                val num = idString.value.toIntOrNull() ?: return@launch
 
-                        if (it < 0) {
-                            return@let
-                        }
-
-                        if (it >= itemList.value.size) {
-                            listState.scrollToItem(
-                                index = listState.layoutInfo.totalItemsCount
-                            )
-                            return@let
-                        }
-
-                        listState.scrollToItem(
-                            index = it,
-                        )
-                    }
+                if (num < 0) {
+                    return@launch
                 }
+
+                if (num >= itemList.value.size) {
+                    listState.scrollToItem(
+                        index = listState.layoutInfo.totalItemsCount
+                    )
+                    return@launch
+                }
+
+                listState.scrollToItem(
+                    index = num,
+                )
             }
-        ) {
-            Text(text = "JUMP")
         }
-    }
+    )
 
     Button(
         modifier = Modifier
@@ -127,5 +113,34 @@ fun EditScreen(
         },
     ) {
         Text(text = "+")
+    }
+}
+
+@Composable
+fun NumberAndButton(
+    value: String,
+    onValueChange: (String) -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
+        TextField(
+            modifier = Modifier
+                .weight(1f),
+            value = value,
+            onValueChange = onValueChange,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number
+            ),
+        )
+
+        Button(
+            onClick = onClick
+        ) {
+            Text(text = "JUMP")
+        }
     }
 }
