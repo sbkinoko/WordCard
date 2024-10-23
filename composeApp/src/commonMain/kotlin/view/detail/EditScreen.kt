@@ -1,4 +1,4 @@
-package view
+package view.detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -24,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-import viewmodel.DetailViewModel
+import viewmodel.detail.DetailViewModel
 
 @Composable
 fun EditScreen(

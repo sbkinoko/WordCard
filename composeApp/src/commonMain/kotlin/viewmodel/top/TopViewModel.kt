@@ -1,4 +1,4 @@
-package viewmodel
+package viewmodel.top
 
 import domain.ScreenType
 import domain.Title

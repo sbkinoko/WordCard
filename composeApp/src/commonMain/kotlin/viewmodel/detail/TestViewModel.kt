@@ -1,4 +1,4 @@
-package viewmodel
+package viewmodel.detail
 
 import domain.Constant
 import domain.Detail

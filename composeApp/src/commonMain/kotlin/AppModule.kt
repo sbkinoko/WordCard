@@ -5,9 +5,9 @@ import repository.screentype.ScreenTypeRepository
 import repository.screentype.ScreenTypeRepositoryImpl
 import repository.title.TitleRepository
 import repository.title.TitleRepositoryImpl
-import viewmodel.DetailViewModel
-import viewmodel.TestViewModel
-import viewmodel.TopViewModel
+import viewmodel.detail.DetailViewModel
+import viewmodel.detail.TestViewModel
+import viewmodel.top.TopViewModel
 
 val AppModule = module {
     single<ScreenTypeRepository> {

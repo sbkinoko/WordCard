@@ -1,4 +1,4 @@
-package view
+package view.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
-import viewmodel.TestViewModel
+import viewmodel.detail.TestViewModel
 
 @Composable
 fun TestScreen(
-    setJumpTarget: (Int) -> Unit ,
+    setJumpTarget: (Int) -> Unit,
     modifier: Modifier = Modifier,
     testViewModel: TestViewModel = koinInject(),
 ) {

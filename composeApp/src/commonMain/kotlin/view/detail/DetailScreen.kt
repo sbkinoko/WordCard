@@ -1,4 +1,4 @@
-package view
+package view.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import domain.ScreenType
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
-import viewmodel.DetailViewModel
+import viewmodel.detail.DetailViewModel
 
 @Composable
 fun DetailScreen(
