@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
@@ -33,12 +35,16 @@ fun TopScreen(
         modifier = modifier
             .fillMaxSize()
             .clickable(
-                interactionSource = remember { MutableInteractionSource() },
+                interactionSource = remember {
+                    MutableInteractionSource()
+                },
                 indication = null,
             ) {
                 focusManager.clearFocus()
             }
-            .padding(10.dp),
+            .padding(10.dp)
+            .imePadding()
+            .safeDrawingPadding(),
         verticalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         LazyColumn(
