@@ -13,7 +13,6 @@ import org.koin.core.component.inject
 import org.mongodb.kbson.ObjectId
 import repository.detail.DetailRepository
 import repository.screentype.ScreenTypeRepository
-import wordcard.composeapp.generated.resources.Res
 
 class DetailViewModel : KoinComponent {
     private val screenTypeRepository: ScreenTypeRepository by inject()
