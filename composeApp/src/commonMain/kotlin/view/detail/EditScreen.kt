@@ -64,13 +64,13 @@ fun EditScreen(
         itemsIndexed(
             itemList.value
         ) { index, id ->
-            detailViewModel.getItem(id).let {
+            detailViewModel.getItem(id).let { detail ->
                 DetailComponent(
                     index = index,
-                    detail = it,
+                    detail = detail,
                     update = { front, back, color ->
                         detailViewModel.update(
-                            id = it.id,
+                            id = detail.id,
                             front = front,
                             back = back,
                             color = color
@@ -78,7 +78,13 @@ fun EditScreen(
                     },
                     delete = {
                         detailViewModel.delete(
-                            id = it.id
+                            id = detail.id
+                        )
+                    },
+                    onClickMove = {
+                        detailViewModel.move(
+                            id = id,
+                            index = it,
                         )
                     }
                 )

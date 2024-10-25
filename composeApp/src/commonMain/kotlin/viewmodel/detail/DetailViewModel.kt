@@ -13,13 +13,14 @@ import org.koin.core.component.inject
 import org.mongodb.kbson.ObjectId
 import repository.detail.DetailRepository
 import repository.screentype.ScreenTypeRepository
+import wordcard.composeapp.generated.resources.Res
 
 class DetailViewModel : KoinComponent {
     private val screenTypeRepository: ScreenTypeRepository by inject()
 
     private val detailRepository: DetailRepository by inject()
 
-    var list: List<ObjectId> = listOf()
+    private var list: List<ObjectId> = listOf()
 
     val detailListState: MutableStateFlow<List<ObjectId>> = MutableStateFlow(
         listOf()
@@ -90,5 +91,20 @@ class DetailViewModel : KoinComponent {
         CoroutineScope(Dispatchers.Default).launch {
             screenTypeRepository.setScreenType(ScreenType.EDIT)
         }
+    }
+
+    fun move(
+        id: ObjectId,
+        index: String,
+    ) {
+        val indexNum = index.toInt()
+        if (indexNum < 0 || indexNum >= list.size) {
+            return
+        }
+        val newList = list.filter {
+            it != id
+        }.toMutableList()
+        newList.add(indexNum, id)
+        detailListState.value = newList.toList()
     }
 }
