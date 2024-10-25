@@ -65,6 +65,13 @@ class DetailRepositoryImpl : DetailRepository {
             println(detailList.size)
         }
 
+    override fun getDetail(objectId: ObjectId): Detail {
+        return realm.query<RealmDetail>("id == $0", objectId)
+            .find()
+            .first()
+            .toDetail()
+    }
+
     override fun updateAt(
         id: ObjectId,
         front: String,

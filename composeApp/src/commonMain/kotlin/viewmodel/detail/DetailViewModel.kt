@@ -1,5 +1,6 @@
 package viewmodel.detail
 
+import domain.Detail
 import domain.ScreenType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +19,26 @@ class DetailViewModel : KoinComponent {
 
     private val detailRepository: DetailRepository by inject()
 
-    val detailListState =
-        detailRepository.detailListState
+    var list: List<ObjectId> = listOf()
+
+    val detailListState: MutableStateFlow<List<ObjectId>> = MutableStateFlow(
+        listOf()
+    )
+
+    init {
+        CoroutineScope(Dispatchers.Default).launch {
+            detailRepository.detailListState.collect {
+                list = it.map { detail ->
+                    detail.id
+                }
+                detailListState.value = list
+            }
+        }
+    }
+
+    fun getItem(id: ObjectId): Detail {
+        return detailRepository.getDetail(id)
+    }
 
     private val mutableTitleFlow: MutableStateFlow<String> = MutableStateFlow("")
     val titleFlow: StateFlow<String> = mutableTitleFlow.asStateFlow()

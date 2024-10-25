@@ -10,6 +10,8 @@ interface DetailRepository {
 
     var titleId: ObjectId?
 
+    fun getDetail(objectId: ObjectId): Detail
+
     fun add(
         titleId: ObjectId,
     )
