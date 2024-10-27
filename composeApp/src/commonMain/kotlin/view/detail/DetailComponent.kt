@@ -37,6 +37,8 @@ fun DetailComponent(
     detail: Detail,
     onClickMove: (String) -> Unit,
     update: (front: String, back: String, color: String) -> Unit,
+    onClickUpperAdd: () -> Unit,
+    onClickLowerAdd: () -> Unit,
     delete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -79,9 +81,7 @@ fun DetailComponent(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Button(
-                onClick = {
-                    // 上に追加処理
-                },
+                onClick = onClickUpperAdd,
             ) {
                 Text("+")
             }
@@ -91,9 +91,7 @@ fun DetailComponent(
             )
 
             Button(
-                onClick = {
-                    // 下に追加処理
-                },
+                onClick = onClickLowerAdd,
             )
             {
                 Text("+")

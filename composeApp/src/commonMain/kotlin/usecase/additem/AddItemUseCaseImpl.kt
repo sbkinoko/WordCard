@@ -10,9 +10,11 @@ class AddItemUseCaseImpl(
     private val detailOrderRepository: DetailOrderRepository,
     private val screenTypeRepository: ScreenTypeRepository,
 ) : AddItemUseCase {
-    override fun invoke(): List<ObjectId> {
+    override fun invoke(
+         objectId:ObjectId,
+    ): List<ObjectId> {
         val titleId = screenTypeRepository.title!!.id
-        val objectId = ObjectId()
+
         detailRepository.add(
             titleId = titleId,
             id = objectId,
