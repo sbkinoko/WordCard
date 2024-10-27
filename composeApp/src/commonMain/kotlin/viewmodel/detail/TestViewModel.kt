@@ -12,10 +12,12 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import repository.detail.DetailRepository
+import repository.screentype.ScreenTypeRepository
 import kotlin.random.Random
 
 class TestViewModel : KoinComponent {
     private val detailRepository: DetailRepository by inject()
+    private val screenTypeRepository: ScreenTypeRepository by inject()
 
     private var list = listOf<Detail>()
 
@@ -38,7 +40,9 @@ class TestViewModel : KoinComponent {
     var questionId: Int = 0
 
     init {
-        list = detailRepository.list
+        list = detailRepository.getItems(
+            titleId = screenTypeRepository.title!!.id,
+        )
         // repositoryかcallbackを用意する
         mutableQuestion = MutableStateFlow(
             Detail(
@@ -58,7 +62,9 @@ class TestViewModel : KoinComponent {
         _input.value = ""
         _answer.value = ""
 
-        list = detailRepository.list
+        list = detailRepository.getItems(
+            titleId = screenTypeRepository.title!!.id,
+        )
 
         if (list.isEmpty()) {
             return

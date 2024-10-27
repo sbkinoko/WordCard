@@ -49,7 +49,7 @@ fun DetailScreen(
     }
 
     LaunchedEffect(Unit) {
-        detailViewModel.setId()
+        detailViewModel.init()
         delay(
             timeMillis = 100,
         )
