@@ -95,11 +95,21 @@ fun EditScreen(
                         editViewModel.insertAt(
                             index = index,
                         )
+                        CoroutineScope(Dispatchers.Main).launch {
+                            listState.scrollToItem(
+                                index = index
+                            )
+                        }
                     },
                     onClickLowerAdd = {
                         editViewModel.insertAt(
                             index = index + 1
                         )
+                        CoroutineScope(Dispatchers.Main).launch {
+                            listState.scrollToItem(
+                                index = index + 1
+                            )
+                        }
                     },
                 )
             }
