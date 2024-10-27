@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -23,14 +26,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import common.commonBorder
 import domain.Detail
 
 @Composable
 fun DetailComponent(
     index: Int,
     detail: Detail,
+    onClickMove: (String) -> Unit,
     update: (front: String, back: String, color: String) -> Unit,
+    onClickUpperAdd: () -> Unit,
+    onClickLowerAdd: () -> Unit,
     delete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -73,9 +81,7 @@ fun DetailComponent(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Button(
-                onClick = {
-                    // 上に追加処理
-                },
+                onClick = onClickUpperAdd,
             ) {
                 Text("+")
             }
@@ -85,9 +91,7 @@ fun DetailComponent(
             )
 
             Button(
-                onClick = {
-                    // 下に追加処理
-                },
+                onClick = onClickLowerAdd,
             )
             {
                 Text("+")
@@ -171,7 +175,57 @@ fun DetailComponent(
             )
         }
 
+        RightEditArea(
+            modifier = Modifier
+                .width(100.dp),
+            onClickMove = onClickMove,
+            delete = delete,
+        )
+    }
+}
+
+@Composable
+fun RightEditArea(
+    onClickMove: (String) -> Unit = {},
+    delete: () -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
+    val moveTo = remember {
+        mutableStateOf("")
+    }
+
+    Column(
+        modifier = modifier.padding(5.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .commonBorder(),
+            label = { Text("移動先") },
+            value = moveTo.value,
+            onValueChange = {
+                moveTo.value = it
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number
+            ),
+        )
+
         Button(
+            modifier = Modifier
+                .fillMaxWidth(),
+            onClick = {
+                onClickMove(moveTo.value)
+                moveTo.value = ""
+            },
+        ) {
+            Text("Move")
+        }
+
+        Button(
+            modifier = Modifier
+                .fillMaxWidth(),
             onClick = delete,
         ) {
             Text("-")

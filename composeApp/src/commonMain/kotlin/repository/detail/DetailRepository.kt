@@ -1,17 +1,14 @@
 package repository.detail
 
 import domain.Detail
-import kotlinx.coroutines.flow.StateFlow
 import org.mongodb.kbson.ObjectId
 
 interface DetailRepository {
-    val detailListState: StateFlow<List<Detail>>
-    val list: List<Detail>
-
-    var titleId: ObjectId?
+    fun getDetail(objectId: ObjectId): Detail?
 
     fun add(
         titleId: ObjectId,
+        id: ObjectId,
     )
 
     fun updateAt(
@@ -29,4 +26,8 @@ interface DetailRepository {
         id: ObjectId,
         result: Boolean,
     )
+
+    fun getItems(
+        titleId: ObjectId,
+    ): List<Detail>
 }

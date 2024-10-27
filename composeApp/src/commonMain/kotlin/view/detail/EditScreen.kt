@@ -24,20 +24,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-import viewmodel.detail.DetailViewModel
+import viewmodel.detail.EditViewModel
 
 @Composable
 fun EditScreen(
     modifier: Modifier = Modifier,
-    detailViewModel: DetailViewModel = koinInject(),
+    editViewModel: EditViewModel = koinInject(),
     jumpTo: Int = 0,
 ) {
-    val itemList = detailViewModel.detailListState.collectAsState()
+    val itemList = editViewModel
+        .detailOrderState
+        .collectAsState()
 
     val listState = rememberLazyListState()
 
     val idString = remember {
         mutableStateOf("")
+    }
+
+    LaunchedEffect(Unit) {
+        editViewModel.init()
     }
 
     LaunchedEffect(jumpTo) {
@@ -61,24 +67,52 @@ fun EditScreen(
     ) {
         itemsIndexed(
             itemList.value
-        ) { index, it ->
-            DetailComponent(
-                index = index,
-                detail = it,
-                update = { front, back, color ->
-                    detailViewModel.update(
-                        id = it.id,
-                        front = front,
-                        back = back,
-                        color = color
-                    )
-                },
-                delete = {
-                    detailViewModel.delete(
-                        id = it.id
-                    )
-                }
-            )
+        ) { index, id ->
+            editViewModel.getItem(id)?.let { detail ->
+                DetailComponent(
+                    index = index,
+                    detail = detail,
+                    update = { front, back, color ->
+                        editViewModel.update(
+                            id = detail.id,
+                            front = front,
+                            back = back,
+                            color = color
+                        )
+                    },
+                    delete = {
+                        editViewModel.delete(
+                            id = detail.id
+                        )
+                    },
+                    onClickMove = {
+                        editViewModel.move(
+                            id = id,
+                            index = it,
+                        )
+                    },
+                    onClickUpperAdd = {
+                        editViewModel.insertAt(
+                            index = index,
+                        )
+                        CoroutineScope(Dispatchers.Main).launch {
+                            listState.scrollToItem(
+                                index = index
+                            )
+                        }
+                    },
+                    onClickLowerAdd = {
+                        editViewModel.insertAt(
+                            index = index + 1
+                        )
+                        CoroutineScope(Dispatchers.Main).launch {
+                            listState.scrollToItem(
+                                index = index + 1
+                            )
+                        }
+                    },
+                )
+            }
         }
     }
 
@@ -124,7 +158,7 @@ fun EditScreen(
         onClick = {
             CoroutineScope(Dispatchers.Main).launch {
                 val index = listState.layoutInfo.totalItemsCount
-                detailViewModel.add()
+                editViewModel.add()
                 delay(100)
                 listState.scrollToItem(
                     index = index,

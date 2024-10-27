@@ -8,62 +8,24 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.toRealmList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
 class DetailRepositoryImpl : DetailRepository {
-    private val mutableRealmTitleFlow: MutableSharedFlow<List<Detail>> = MutableSharedFlow(
-        replay = 1,
-    )
-    private val titleFlow: SharedFlow<List<Detail>> = mutableRealmTitleFlow.asSharedFlow()
-
     private val config: RealmConfiguration =
         RealmConfiguration.create(schema = setOf(RealmDetail::class))
     private val realm: Realm = Realm.open(config)
 
-    override val list: List<Detail>
-        get() = detailList
+    override fun getDetail(objectId: ObjectId): Detail? {
+        val result = realm.query<RealmDetail>("id == $0", objectId)
+            .find()
 
-    private var detailList: List<Detail> = emptyList()
-        set(value) {
-            field = value
-            CoroutineScope(Dispatchers.Default).launch {
-                mutableRealmTitleFlow.emit(value)
-            }
+        if (result.isEmpty()) {
+            return null
         }
 
-    override val detailListState: StateFlow<List<Detail>> = titleFlow.stateIn(
-        scope = CoroutineScope(Dispatchers.Default),
-        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
-        initialValue = detailList,
-    )
-
-    override var titleId: ObjectId? = null
-        set(value) {
-            field = value
-            if (value == null) {
-                detailList = emptyList()
-                return
-            }
-
-            detailList = realm
-                .query<RealmDetail>(
-                    "titleId == $0", titleId
-                )
-                .find()
-                .toList()
-                .map {
-                    it.toDetail()
-                }
-            println(detailList.size)
-        }
+        return result.first()
+            .toDetail()
+    }
 
     override fun updateAt(
         id: ObjectId,
@@ -83,31 +45,18 @@ class DetailRepositoryImpl : DetailRepository {
                 this.color = color
             }
         }
-
-        detailList = detailList.map { detail ->
-            if (detail.id == id) {
-                detail.copy(
-                    front = front,
-                    back = back,
-                    color = color,
-                )
-            } else {
-                detail
-            }
-        }.toMutableList()
     }
 
     override fun add(
         titleId: ObjectId,
+        id: ObjectId,
     ) {
         realm.writeBlocking {
             val detail = RealmDetail().apply {
                 this.titleId = titleId
+                this.id = id
             }
             copyToRealm(detail)
-
-            val list = detailList + detail.toDetail()
-            detailList = list
         }
     }
 
@@ -122,10 +71,6 @@ class DetailRepositoryImpl : DetailRepository {
             findLatest(detail)?.let {
                 delete(it)
             }
-        }
-
-        detailList = detailList.filter {
-            it.id != id
         }
     }
 
@@ -152,16 +97,20 @@ class DetailRepositoryImpl : DetailRepository {
             findLatest(detail)?.apply {
                 resultList = updatedList.toRealmList()
             }
-
-            detailList = detailList.map { detailItem ->
-                if (detailItem.id == id) {
-                    detailItem.copy(
-                        resultList = updatedList
-                    )
-                } else {
-                    detailItem
-                }
-            }.toMutableList()
         }
+    }
+
+    override fun getItems(
+        titleId: ObjectId,
+    ): List<Detail> {
+        return realm
+            .query<RealmDetail>(
+                "titleId == $0", titleId
+            )
+            .find()
+            .toList()
+            .map {
+                it.toDetail()
+            }
     }
 }

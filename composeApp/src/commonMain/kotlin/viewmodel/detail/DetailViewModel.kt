@@ -9,17 +9,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.mongodb.kbson.ObjectId
-import repository.detail.DetailRepository
 import repository.screentype.ScreenTypeRepository
 
 class DetailViewModel : KoinComponent {
     private val screenTypeRepository: ScreenTypeRepository by inject()
-
-    private val detailRepository: DetailRepository by inject()
-
-    val detailListState =
-        detailRepository.detailListState
 
     private val mutableTitleFlow: MutableStateFlow<String> = MutableStateFlow("")
     val titleFlow: StateFlow<String> = mutableTitleFlow.asStateFlow()
@@ -32,34 +25,10 @@ class DetailViewModel : KoinComponent {
         mutableTitleFlow.value = ""
     }
 
-    fun setId() {
-        detailRepository.titleId = screenTypeRepository.title!!.id
+    fun init() {
         mutableTitleFlow.value = screenTypeRepository.title!!.title
     }
 
-    fun update(
-        id: ObjectId,
-        front: String,
-        back: String,
-        color: String,
-    ) {
-        detailRepository.updateAt(
-            id = id,
-            front = front,
-            back = back,
-            color = color,
-        )
-    }
-
-    fun add() {
-        detailRepository.add(
-            titleId = screenTypeRepository.title!!.id,
-        )
-    }
-
-    fun delete(id: ObjectId) {
-        detailRepository.deleteAt(id)
-    }
 
     fun toTest() {
         CoroutineScope(Dispatchers.Default).launch {
