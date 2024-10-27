@@ -13,12 +13,15 @@ class MoveItemUseCaseImpl(
         index: String,
     ) {
         val indexNum = index.toIntOrNull() ?: return
-        val list = detailOrderRepository.list
+
         if (indexNum < 0) {
             return
         }
 
         val titleId = screenTypeRepository.title!!.id
+        val list = detailOrderRepository.getItemOrder(
+            titleId = titleId,
+        )
 
         val newList = list.filter {
             it != id
@@ -36,8 +39,8 @@ class MoveItemUseCaseImpl(
         // 指定した位置に移動
         newList.add(indexNum, id)
         detailOrderRepository.update(
-            titleId = id,
-            list = newList
+            titleId = titleId,
+            list = newList.toList()
         )
     }
 }

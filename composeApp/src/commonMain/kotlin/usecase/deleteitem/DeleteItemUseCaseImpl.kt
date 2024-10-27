@@ -15,7 +15,9 @@ class DeleteItemUseCaseImpl(
         detailRepository.deleteAt(id)
         detailOrderRepository.update(
             titleId = titleId,
-            list = detailOrderRepository.list.filter {
+            list = detailOrderRepository.getItemOrder(
+                titleId = titleId,
+            ).filter {
                 it != id
             }
         )
