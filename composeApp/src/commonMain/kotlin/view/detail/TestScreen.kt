@@ -63,7 +63,8 @@ fun TestScreen(
                 .weight(2f)
                 .fillMaxWidth()
                 .commonBorder()
-                .componentBackground(),
+                .componentBackground()
+                .padding(5.dp),
             text = question.value.front
         )
 
@@ -85,7 +86,8 @@ fun TestScreen(
                 .weight(1f)
                 .fillMaxWidth()
                 .commonBorder()
-                .componentBackground(),
+                .componentBackground()
+                .padding(5.dp),
             text = if (showAnswer.value) {
                 question.value.back
             } else {

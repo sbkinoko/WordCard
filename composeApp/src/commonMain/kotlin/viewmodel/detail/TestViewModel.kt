@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.mongodb.kbson.ObjectId
 import repository.detail.DetailRepository
 import repository.screentype.ScreenTypeRepository
 import kotlin.random.Random
@@ -19,9 +20,17 @@ class TestViewModel : KoinComponent {
     private val detailRepository: DetailRepository by inject()
     private val screenTypeRepository: ScreenTypeRepository by inject()
 
-    private var list = listOf<Detail>()
-
-    private val mutableQuestion: MutableStateFlow<Detail>
+    private val mutableQuestion: MutableStateFlow<Detail> =
+        MutableStateFlow(
+            Detail(
+                id = ObjectId(),
+                titleId = ObjectId(),
+                front = "",
+                back = "",
+                color = "",
+                resultList = listOf(0),
+            )
+        )
 
     val question: StateFlow<Detail>
         get() = mutableQuestion.asStateFlow()
@@ -40,20 +49,6 @@ class TestViewModel : KoinComponent {
     var questionId: Int = 0
 
     init {
-        list = detailRepository.getItems(
-            titleId = screenTypeRepository.title!!.id,
-        )
-        // repositoryかcallbackを用意する
-        mutableQuestion = MutableStateFlow(
-            Detail(
-                id = org.mongodb.kbson.ObjectId(),
-                titleId = org.mongodb.kbson.ObjectId(),
-                front = "",
-                back = "",
-                color = "",
-                resultList = listOf(0),
-            )
-        )
         reset()
     }
 
@@ -62,7 +57,7 @@ class TestViewModel : KoinComponent {
         _input.value = ""
         _answer.value = ""
 
-        list = detailRepository.getItems(
+        val list = detailRepository.getItems(
             titleId = screenTypeRepository.title!!.id,
         )
 
