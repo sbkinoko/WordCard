@@ -68,10 +68,15 @@ class DetailRepositoryImpl : DetailRepository {
             isLoading = false
         }
 
-    override fun getDetail(objectId: ObjectId): Detail {
-        return realm.query<RealmDetail>("id == $0", objectId)
+    override fun getDetail(objectId: ObjectId): Detail? {
+        val result = realm.query<RealmDetail>("id == $0", objectId)
             .find()
-            .first()
+
+        if (result.isEmpty()) {
+            return null
+        }
+
+        return result.first()
             .toDetail()
     }
 

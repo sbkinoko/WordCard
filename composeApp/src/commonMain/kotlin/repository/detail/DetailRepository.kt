@@ -11,7 +11,7 @@ interface DetailRepository {
     var titleId: ObjectId?
     var isLoading: Boolean
 
-    fun getDetail(objectId: ObjectId): Detail
+    fun getDetail(objectId: ObjectId): Detail?
 
     fun add(
         titleId: ObjectId,

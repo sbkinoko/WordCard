@@ -64,7 +64,7 @@ fun EditScreen(
         itemsIndexed(
             itemList.value
         ) { index, id ->
-            detailViewModel.getItem(id).let { detail ->
+            detailViewModel.getItem(id)?.let { detail ->
                 DetailComponent(
                     index = index,
                     detail = detail,

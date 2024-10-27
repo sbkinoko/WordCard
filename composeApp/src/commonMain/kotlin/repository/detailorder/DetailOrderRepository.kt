@@ -13,7 +13,7 @@ interface DetailOrderRepository {
     val list: List<ObjectId>
 
     fun update(
-        id: ObjectId,
+        titleId: ObjectId,
         list: List<ObjectId>
     )
 

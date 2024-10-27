@@ -75,24 +75,28 @@ class DetailOrderRepositoryImpl : DetailOrderRepository {
         }
 
     override fun update(
-        id: ObjectId,
+        titleId: ObjectId,
         list: List<ObjectId>,
     ) {
-        val nowTitleId: ObjectId = titleId ?: return
-
         _list = list
         realm.writeBlocking {
-            val detailOrder = realm.query<RealmDetailOrder>("titleId == $0", titleId)
+            val detailOrder = realm
+                .query<RealmDetailOrder>(
+                    "titleId == $0",
+                    titleId
+                )
                 .first()
                 .find()
 
             if (detailOrder == null) {
+                // データがなかったので新規作成
                 val itemOrder = RealmDetailOrder().apply {
-                    this.titleId = nowTitleId
+                    this.titleId = titleId
                     this.oderList = list.toRealmList()
                 }
                 copyToRealm(itemOrder)
             } else {
+                // データがあったのでアップデート
                 findLatest(detailOrder)?.apply {
                     this.oderList = list.toRealmList()
                 }
