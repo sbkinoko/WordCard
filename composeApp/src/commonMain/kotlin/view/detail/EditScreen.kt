@@ -42,7 +42,7 @@ fun EditScreen(
         mutableStateOf("")
     }
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         editViewModel.init()
     }
 
@@ -90,7 +90,17 @@ fun EditScreen(
                             id = id,
                             index = it,
                         )
-                    }
+                    },
+                    onClickUpperAdd = {
+                        editViewModel.insertAt(
+                            index = index,
+                        )
+                    },
+                    onClickLowerAdd = {
+                        editViewModel.insertAt(
+                            index = index + 1
+                        )
+                    },
                 )
             }
         }

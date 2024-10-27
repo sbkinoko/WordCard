@@ -71,7 +71,7 @@ class EditViewModel : KoinComponent {
     }
 
     fun add() {
-        addItemUseCase.invoke()
+        addItemUseCase.invoke(ObjectId())
         update()
     }
 
@@ -89,6 +89,18 @@ class EditViewModel : KoinComponent {
         moveItemUseCase.invoke(
             id = id,
             index = index,
+        )
+        update()
+    }
+
+    fun insertAt(
+        index: Int,
+    ) {
+        val id = ObjectId()
+        addItemUseCase.invoke(objectId = id)
+        moveItemUseCase.invoke(
+            id = id,
+            index = index.toString(),
         )
         update()
     }
