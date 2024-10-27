@@ -9,6 +9,9 @@ interface DetailRepository {
     val list: List<Detail>
 
     var titleId: ObjectId?
+    var isLoading: Boolean
+
+    fun getDetail(objectId: ObjectId): Detail?
 
     fun add(
         titleId: ObjectId,

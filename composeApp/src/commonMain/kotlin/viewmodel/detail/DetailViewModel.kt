@@ -1,5 +1,6 @@
 package viewmodel.detail
 
+import domain.Detail
 import domain.ScreenType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,21 +12,66 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.mongodb.kbson.ObjectId
 import repository.detail.DetailRepository
+import repository.detailorder.DetailOrderRepository
 import repository.screentype.ScreenTypeRepository
 
 class DetailViewModel : KoinComponent {
     private val screenTypeRepository: ScreenTypeRepository by inject()
 
     private val detailRepository: DetailRepository by inject()
+    private val detailOrderRepository: DetailOrderRepository by inject()
 
-    val detailListState =
-        detailRepository.detailListState
+    val detailListState: StateFlow<List<ObjectId>> =
+        detailOrderRepository.detailOrderState
+
+    fun getItem(id: ObjectId): Detail? {
+        return detailRepository.getDetail(id)
+    }
 
     private val mutableTitleFlow: MutableStateFlow<String> = MutableStateFlow("")
     val titleFlow: StateFlow<String> = mutableTitleFlow.asStateFlow()
 
+    private val titleId: ObjectId
+        get() = screenTypeRepository.title!!.id
+
     val screenType =
         screenTypeRepository.screenType
+
+    private var isFirst: Boolean = false
+
+    private val needInit: Boolean
+        get() = detailOrderRepository.isLoading.not() &&
+                detailRepository.isLoading.not() &&
+                detailOrderRepository.isEmpty &&
+                isFirst
+
+    init {
+        CoroutineScope(Dispatchers.Default).launch {
+            detailListState.collect {
+                tryInitOrder()
+            }
+        }
+        CoroutineScope(Dispatchers.Default).launch {
+            detailRepository.detailListState.collect {
+                tryInitOrder()
+            }
+        }
+    }
+
+    private fun tryInitOrder() {
+        if (needInit.not()) {
+            return
+        }
+
+        val list = detailRepository.list.map {
+            it.id
+        }
+        detailOrderRepository.update(
+            titleId = titleId,
+            list = list
+        )
+        isFirst = false
+    }
 
     fun reset() {
         screenTypeRepository.title = null
@@ -33,8 +79,10 @@ class DetailViewModel : KoinComponent {
     }
 
     fun setId() {
+        isFirst = true
         detailRepository.titleId = screenTypeRepository.title!!.id
         mutableTitleFlow.value = screenTypeRepository.title!!.title
+        detailOrderRepository.titleId = screenTypeRepository.title!!.id
     }
 
     fun update(
@@ -55,10 +103,20 @@ class DetailViewModel : KoinComponent {
         detailRepository.add(
             titleId = screenTypeRepository.title!!.id,
         )
+        detailOrderRepository.update(
+            titleId = screenTypeRepository.title!!.id,
+            list = detailOrderRepository.list + detailRepository.list.last().id
+        )
     }
 
     fun delete(id: ObjectId) {
         detailRepository.deleteAt(id)
+        detailOrderRepository.update(
+            titleId = titleId,
+            list = detailOrderRepository.list.filter {
+                it != id
+            }
+        )
     }
 
     fun toTest() {
@@ -71,5 +129,35 @@ class DetailViewModel : KoinComponent {
         CoroutineScope(Dispatchers.Default).launch {
             screenTypeRepository.setScreenType(ScreenType.EDIT)
         }
+    }
+
+    fun move(
+        id: ObjectId,
+        index: String,
+    ) {
+        val indexNum = index.toIntOrNull() ?: return
+        val list = detailOrderRepository.list
+        if (indexNum < 0) {
+            return
+        }
+
+        val newList = list.filter {
+            it != id
+        }.toMutableList()
+
+        if (indexNum >= list.size) {
+            detailOrderRepository.update(
+                titleId = titleId,
+                list = list + id
+            )
+            return
+        }
+
+
+        newList.add(indexNum, id)
+        detailOrderRepository.update(
+            titleId = id,
+            list = newList
+        )
     }
 }

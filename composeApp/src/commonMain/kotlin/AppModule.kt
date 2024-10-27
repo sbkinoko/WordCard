@@ -1,6 +1,8 @@
 import org.koin.dsl.module
 import repository.detail.DetailRepository
 import repository.detail.DetailRepositoryImpl
+import repository.detailorder.DetailOrderRepository
+import repository.detailorder.DetailOrderRepositoryImpl
 import repository.screentype.ScreenTypeRepository
 import repository.screentype.ScreenTypeRepositoryImpl
 import repository.title.TitleRepository
@@ -20,6 +22,10 @@ val AppModule = module {
 
     single<DetailRepository> {
         DetailRepositoryImpl()
+    }
+
+    single<DetailOrderRepository> {
+        DetailOrderRepositoryImpl()
     }
 
     single {

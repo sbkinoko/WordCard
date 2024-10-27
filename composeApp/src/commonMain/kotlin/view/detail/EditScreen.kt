@@ -32,7 +32,9 @@ fun EditScreen(
     detailViewModel: DetailViewModel = koinInject(),
     jumpTo: Int = 0,
 ) {
-    val itemList = detailViewModel.detailListState.collectAsState()
+    val itemList = detailViewModel
+        .detailListState
+        .collectAsState()
 
     val listState = rememberLazyListState()
 
@@ -61,24 +63,32 @@ fun EditScreen(
     ) {
         itemsIndexed(
             itemList.value
-        ) { index, it ->
-            DetailComponent(
-                index = index,
-                detail = it,
-                update = { front, back, color ->
-                    detailViewModel.update(
-                        id = it.id,
-                        front = front,
-                        back = back,
-                        color = color
-                    )
-                },
-                delete = {
-                    detailViewModel.delete(
-                        id = it.id
-                    )
-                }
-            )
+        ) { index, id ->
+            detailViewModel.getItem(id)?.let { detail ->
+                DetailComponent(
+                    index = index,
+                    detail = detail,
+                    update = { front, back, color ->
+                        detailViewModel.update(
+                            id = detail.id,
+                            front = front,
+                            back = back,
+                            color = color
+                        )
+                    },
+                    delete = {
+                        detailViewModel.delete(
+                            id = detail.id
+                        )
+                    },
+                    onClickMove = {
+                        detailViewModel.move(
+                            id = id,
+                            index = it,
+                        )
+                    }
+                )
+            }
         }
     }
 

@@ -31,6 +31,8 @@ class DetailRepositoryImpl : DetailRepository {
     override val list: List<Detail>
         get() = detailList
 
+    override var isLoading: Boolean = false
+
     private var detailList: List<Detail> = emptyList()
         set(value) {
             field = value
@@ -47,6 +49,7 @@ class DetailRepositoryImpl : DetailRepository {
 
     override var titleId: ObjectId? = null
         set(value) {
+            isLoading = true
             field = value
             if (value == null) {
                 detailList = emptyList()
@@ -62,8 +65,20 @@ class DetailRepositoryImpl : DetailRepository {
                 .map {
                     it.toDetail()
                 }
-            println(detailList.size)
+            isLoading = false
         }
+
+    override fun getDetail(objectId: ObjectId): Detail? {
+        val result = realm.query<RealmDetail>("id == $0", objectId)
+            .find()
+
+        if (result.isEmpty()) {
+            return null
+        }
+
+        return result.first()
+            .toDetail()
+    }
 
     override fun updateAt(
         id: ObjectId,
