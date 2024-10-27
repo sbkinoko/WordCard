@@ -24,22 +24,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-import viewmodel.detail.DetailViewModel
+import viewmodel.detail.EditViewModel
 
 @Composable
 fun EditScreen(
     modifier: Modifier = Modifier,
-    detailViewModel: DetailViewModel = koinInject(),
+    editViewModel: EditViewModel = koinInject(),
     jumpTo: Int = 0,
 ) {
-    val itemList = detailViewModel
-        .detailListState
+    val itemList = editViewModel
+        .detailOrderState
         .collectAsState()
 
     val listState = rememberLazyListState()
 
     val idString = remember {
         mutableStateOf("")
+    }
+
+    LaunchedEffect(Unit){
+        editViewModel.init()
     }
 
     LaunchedEffect(jumpTo) {
@@ -64,12 +68,12 @@ fun EditScreen(
         itemsIndexed(
             itemList.value
         ) { index, id ->
-            detailViewModel.getItem(id)?.let { detail ->
+            editViewModel.getItem(id)?.let { detail ->
                 DetailComponent(
                     index = index,
                     detail = detail,
                     update = { front, back, color ->
-                        detailViewModel.update(
+                        editViewModel.update(
                             id = detail.id,
                             front = front,
                             back = back,
@@ -77,12 +81,12 @@ fun EditScreen(
                         )
                     },
                     delete = {
-                        detailViewModel.delete(
+                        editViewModel.delete(
                             id = detail.id
                         )
                     },
                     onClickMove = {
-                        detailViewModel.move(
+                        editViewModel.move(
                             id = id,
                             index = it,
                         )
@@ -134,7 +138,7 @@ fun EditScreen(
         onClick = {
             CoroutineScope(Dispatchers.Main).launch {
                 val index = listState.layoutInfo.totalItemsCount
-                detailViewModel.add()
+                editViewModel.add()
                 delay(100)
                 listState.scrollToItem(
                     index = index,
