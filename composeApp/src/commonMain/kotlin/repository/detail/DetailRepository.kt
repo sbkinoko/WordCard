@@ -1,7 +1,6 @@
 package repository.detail
 
 import domain.Detail
-import kotlinx.coroutines.flow.StateFlow
 import org.mongodb.kbson.ObjectId
 
 interface DetailRepository {

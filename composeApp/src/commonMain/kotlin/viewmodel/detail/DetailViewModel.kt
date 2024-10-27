@@ -1,6 +1,5 @@
 package viewmodel.detail
 
-import domain.Detail
 import domain.ScreenType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,13 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.mongodb.kbson.ObjectId
-import repository.detail.DetailRepository
-import repository.detailorder.DetailOrderRepository
 import repository.screentype.ScreenTypeRepository
-import usecase.additem.AddItemUseCase
-import usecase.deleteitem.DeleteItemUseCase
-import usecase.moveitem.MoveItemUseCase
 
 class DetailViewModel : KoinComponent {
     private val screenTypeRepository: ScreenTypeRepository by inject()
