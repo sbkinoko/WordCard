@@ -1,4 +1,4 @@
-package org.example.project
+package com.sbkinoko.wordcard
 
 import AppModule
 import android.app.Application
