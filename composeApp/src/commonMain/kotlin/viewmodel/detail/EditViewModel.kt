@@ -13,7 +13,7 @@ import org.mongodb.kbson.ObjectId
 import repository.detail.DetailRepository
 import usecase.additem.AddItemUseCase
 import usecase.deleteitem.DeleteItemUseCase
-import usecase.getitemorder.GetItemOrderUseCase
+import usecase.getitemorder.GetIOrderedItemUseCase
 import usecase.moveitem.MoveItemUseCase
 
 class EditViewModel : KoinComponent {
@@ -23,12 +23,12 @@ class EditViewModel : KoinComponent {
     private val addItemUseCase: AddItemUseCase by inject()
     private val deleteItemUseCase: DeleteItemUseCase by inject()
     private val moveItemUseCase: MoveItemUseCase by inject()
-    private val getItemOrderUseCase: GetItemOrderUseCase by inject()
+    private val getIOrderedItemUseCase: GetIOrderedItemUseCase by inject()
 
-    private val mutableDetailOrderState: MutableStateFlow<List<ObjectId>> =
+    private val mutableDetailOrderState: MutableStateFlow<List<Detail>> =
         MutableStateFlow(emptyList())
 
-    val detailOrderState: StateFlow<List<ObjectId>>
+    val detailOrderState: StateFlow<List<Detail>>
         get() = mutableDetailOrderState.asStateFlow()
 
     init {
@@ -40,20 +40,15 @@ class EditViewModel : KoinComponent {
     }
 
     fun init() {
-        update()
+        updateState()
     }
 
-    private fun update() {
+    private fun updateState() {
         CoroutineScope(Dispatchers.Default).launch {
-            val list = getItemOrderUseCase.invoke()
             mutableDetailOrderState.emit(
-                list,
+                getIOrderedItemUseCase.invoke()
             )
         }
-    }
-
-    fun getItem(id: ObjectId): Detail? {
-        return detailRepository.getDetail(id)
     }
 
     fun update(
@@ -68,18 +63,19 @@ class EditViewModel : KoinComponent {
             back = back,
             color = color,
         )
+        updateState()
     }
 
     fun add() {
         addItemUseCase.invoke(ObjectId())
-        update()
+        updateState()
     }
 
     fun delete(id: ObjectId) {
         deleteItemUseCase.invoke(
             id = id,
         )
-        update()
+        updateState()
     }
 
     fun move(
@@ -90,7 +86,7 @@ class EditViewModel : KoinComponent {
             id = id,
             index = index,
         )
-        update()
+        updateState()
     }
 
     fun insertAt(
@@ -102,6 +98,6 @@ class EditViewModel : KoinComponent {
             id = id,
             index = index.toString(),
         )
-        update()
+        updateState()
     }
 }

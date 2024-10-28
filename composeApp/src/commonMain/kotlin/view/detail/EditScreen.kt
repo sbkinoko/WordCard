@@ -67,52 +67,50 @@ fun EditScreen(
     ) {
         itemsIndexed(
             itemList.value
-        ) { index, id ->
-            editViewModel.getItem(id)?.let { detail ->
-                DetailComponent(
-                    index = index,
-                    detail = detail,
-                    update = { front, back, color ->
-                        editViewModel.update(
-                            id = detail.id,
-                            front = front,
-                            back = back,
-                            color = color
+        ) { index, detail ->
+            DetailComponent(
+                index = index,
+                detail = detail,
+                update = { front, back, color ->
+                    editViewModel.update(
+                        id = detail.id,
+                        front = front,
+                        back = back,
+                        color = color
+                    )
+                },
+                delete = {
+                    editViewModel.delete(
+                        id = detail.id
+                    )
+                },
+                onClickMove = {
+                    editViewModel.move(
+                        id = detail.id,
+                        index = it,
+                    )
+                },
+                onClickUpperAdd = {
+                    editViewModel.insertAt(
+                        index = index,
+                    )
+                    CoroutineScope(Dispatchers.Main).launch {
+                        listState.scrollToItem(
+                            index = index
                         )
-                    },
-                    delete = {
-                        editViewModel.delete(
-                            id = detail.id
-                        )
-                    },
-                    onClickMove = {
-                        editViewModel.move(
-                            id = id,
-                            index = it,
-                        )
-                    },
-                    onClickUpperAdd = {
-                        editViewModel.insertAt(
-                            index = index,
-                        )
-                        CoroutineScope(Dispatchers.Main).launch {
-                            listState.scrollToItem(
-                                index = index
-                            )
-                        }
-                    },
-                    onClickLowerAdd = {
-                        editViewModel.insertAt(
+                    }
+                },
+                onClickLowerAdd = {
+                    editViewModel.insertAt(
+                        index = index + 1
+                    )
+                    CoroutineScope(Dispatchers.Main).launch {
+                        listState.scrollToItem(
                             index = index + 1
                         )
-                        CoroutineScope(Dispatchers.Main).launch {
-                            listState.scrollToItem(
-                                index = index + 1
-                            )
-                        }
-                    },
-                )
-            }
+                    }
+                },
+            )
         }
     }
 

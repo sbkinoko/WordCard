@@ -11,8 +11,8 @@ import usecase.additem.AddItemUseCase
 import usecase.additem.AddItemUseCaseImpl
 import usecase.deleteitem.DeleteItemUseCase
 import usecase.deleteitem.DeleteItemUseCaseImpl
-import usecase.getitemorder.GetItemOrderUseCase
-import usecase.getitemorder.GetItemOrderUseCaseImpl
+import usecase.getitemorder.GetIOrderedItemUseCase
+import usecase.getitemorder.GetIOrderedItemUseCaseImpl
 import usecase.moveitem.MoveItemUseCase
 import usecase.moveitem.MoveItemUseCaseImpl
 import viewmodel.detail.DetailViewModel
@@ -60,10 +60,11 @@ val AppModule = module {
         )
     }
 
-    single<GetItemOrderUseCase> {
-        GetItemOrderUseCaseImpl(
+    single<GetIOrderedItemUseCase> {
+        GetIOrderedItemUseCaseImpl(
             detailOrderRepository = get(),
             screenTypeRepository = get(),
+            detailRepository = get(),
         )
     }
 
