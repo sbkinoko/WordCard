@@ -13,10 +13,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
@@ -60,6 +62,48 @@ fun EditScreen(
         )
     }
 
+    val focusRequesterList: MutableState<List<FocusRequester>> = remember {
+        mutableStateOf(
+            listOf()
+        )
+    }
+
+    val focusFlag = remember {
+        mutableStateOf(false)
+    }
+
+    val focusTarget = remember {
+        mutableStateOf(-1)
+    }
+
+    val layoutUpdated = remember {
+        mutableStateOf(false)
+    }
+
+    if (focusFlag.value && layoutUpdated.value) {
+        focusFlag.value = false
+        layoutUpdated.value = false
+        focusRequesterList.value[focusTarget.value].requestFocus()
+    }
+
+    val addItem: (index: Int) -> Unit = { index ->
+        layoutUpdated.value = false
+        focusRequesterList.value = List(listState.layoutInfo.totalItemsCount + 1) {
+            FocusRequester()
+        }
+        editViewModel.insertAt(
+            index = index,
+        )
+        CoroutineScope(Dispatchers.Main).launch {
+            listState.scrollToItem(
+                index = index
+            )
+            delay(100)
+            focusTarget.value = index
+            focusFlag.value = true
+        }
+    }
+
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -68,9 +112,17 @@ fun EditScreen(
         itemsIndexed(
             itemList.value
         ) { index, detail ->
+            val requester = if (
+                focusRequesterList.value.size <= index
+            ) {
+                FocusRequester()
+            } else {
+                focusRequesterList.value[index]
+            }
             DetailComponent(
                 index = index,
                 detail = detail,
+                focusRequester = requester,
                 update = { front, back, color ->
                     editViewModel.update(
                         id = detail.id,
@@ -91,24 +143,10 @@ fun EditScreen(
                     )
                 },
                 onClickUpperAdd = {
-                    editViewModel.insertAt(
-                        index = index,
-                    )
-                    CoroutineScope(Dispatchers.Main).launch {
-                        listState.scrollToItem(
-                            index = index
-                        )
-                    }
+                    addItem(index)
                 },
                 onClickLowerAdd = {
-                    editViewModel.insertAt(
-                        index = index + 1
-                    )
-                    CoroutineScope(Dispatchers.Main).launch {
-                        listState.scrollToItem(
-                            index = index + 1
-                        )
-                    }
+                    addItem(index + 1)
                 },
             )
         }
@@ -154,18 +192,13 @@ fun EditScreen(
         modifier = Modifier
             .fillMaxWidth(),
         onClick = {
-            CoroutineScope(Dispatchers.Main).launch {
-                val index = listState.layoutInfo.totalItemsCount
-                editViewModel.add()
-                delay(100)
-                listState.scrollToItem(
-                    index = index,
-                )
-            }
+            addItem(listState.layoutInfo.totalItemsCount)
         },
     ) {
         Text(text = "+")
     }
+
+    layoutUpdated.value = true
 }
 
 @Composable

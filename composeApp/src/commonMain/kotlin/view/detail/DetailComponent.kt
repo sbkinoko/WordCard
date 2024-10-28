@@ -21,6 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
@@ -35,6 +37,7 @@ import domain.Detail
 fun DetailComponent(
     index: Int,
     detail: Detail,
+    focusRequester: FocusRequester,
     onClickMove: (String) -> Unit,
     update: (front: String, back: String, color: String) -> Unit,
     onClickUpperAdd: () -> Unit,
@@ -143,7 +146,9 @@ fun DetailComponent(
                     }.onKeyEvent {
                         //　改行したらイベントを消費して何も起こさない
                         it.key.keyCode == Key.Enter.keyCode
-                    },
+                    }.focusRequester(
+                        focusRequester = focusRequester,
+                    ),
                 label = { Text("表") },
                 value = front.value,
                 onValueChange = {
