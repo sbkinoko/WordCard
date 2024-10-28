@@ -66,11 +66,6 @@ class EditViewModel : KoinComponent {
         updateState()
     }
 
-    fun add() {
-        addItemUseCase.invoke(ObjectId())
-        updateState()
-    }
-
     fun delete(id: ObjectId) {
         deleteItemUseCase.invoke(
             id = id,
