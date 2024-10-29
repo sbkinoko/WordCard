@@ -68,26 +68,8 @@ fun EditScreen(
         )
     }
 
-    val focusFlag = remember {
-        mutableStateOf(false)
-    }
-
-    val focusTarget = remember {
-        mutableStateOf(-1)
-    }
-
-    val layoutUpdated = remember {
-        mutableStateOf(false)
-    }
-
-    if (focusFlag.value && layoutUpdated.value) {
-        focusFlag.value = false
-        layoutUpdated.value = false
-        focusRequesterList.value[focusTarget.value].requestFocus()
-    }
 
     val addItem: (index: Int) -> Unit = { index ->
-        layoutUpdated.value = false
         focusRequesterList.value = List(listState.layoutInfo.totalItemsCount + 1) {
             FocusRequester()
         }
@@ -95,12 +77,12 @@ fun EditScreen(
             index = index,
         )
         CoroutineScope(Dispatchers.Main).launch {
+            delay(100)
             listState.scrollToItem(
                 index = index
             )
             delay(100)
-            focusTarget.value = index
-            focusFlag.value = true
+            focusRequesterList.value[index].requestFocus()
         }
     }
 
@@ -197,8 +179,6 @@ fun EditScreen(
     ) {
         Text(text = "+")
     }
-
-    layoutUpdated.value = true
 }
 
 @Composable
