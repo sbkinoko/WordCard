@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +35,15 @@ fun EditScreen(
     editViewModel: EditViewModel = koinInject(),
     jumpTo: Int = 0,
 ) {
+    val focusManager = LocalFocusManager.current
+
+    val clickButton: (() -> Unit) -> () -> Unit = {
+        {
+            focusManager.clearFocus()
+            it()
+        }
+    }
+
     val itemList = editViewModel
         .detailOrderState
         .collectAsState()
@@ -137,10 +147,10 @@ fun EditScreen(
                         index = it,
                     )
                 },
-                onClickUpperAdd = {
+                onClickUpperAdd = clickButton {
                     addItem(index)
                 },
-                onClickLowerAdd = {
+                onClickLowerAdd = clickButton {
                     addItem(index + 1)
                 },
             )
@@ -161,7 +171,7 @@ fun EditScreen(
         onValueChange = {
             idString.value = it
         },
-        onClick = {
+        onClick = clickButton {
             CoroutineScope(Dispatchers.Main).launch {
                 val num = idString.value.toIntOrNull()
 
@@ -192,7 +202,7 @@ fun EditScreen(
     Button(
         modifier = Modifier
             .fillMaxWidth(),
-        onClick = {
+        onClick = clickButton {
             addItem(listState.layoutInfo.totalItemsCount)
         },
     ) {
