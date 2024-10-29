@@ -11,7 +11,9 @@ class GetIOrderedItemUseCaseImpl(
     private val detailOrderRepository: DetailOrderRepository,
 ) : GetIOrderedItemUseCase {
     override fun invoke(): List<Detail> {
-        val titleId = screenTypeRepository.title!!.id
+        val titleId = screenTypeRepository.title?.id
+            ?: return emptyList()
+
         val list = detailOrderRepository.getItemOrder(
             titleId = titleId,
         )
