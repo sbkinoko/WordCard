@@ -68,39 +68,34 @@ fun EditScreen(
         )
     }
 
-    val focusFlag = remember {
-        mutableStateOf(false)
-    }
-
-    val focusTarget = remember {
+    val scrollTo = remember {
         mutableStateOf(-1)
     }
 
-    val layoutUpdated = remember {
+    val updatedFlag = remember {
         mutableStateOf(false)
     }
 
-    if (focusFlag.value && layoutUpdated.value) {
-        focusFlag.value = false
-        layoutUpdated.value = false
-        focusRequesterList.value[focusTarget.value].requestFocus()
-    }
-
     val addItem: (index: Int) -> Unit = { index ->
-        layoutUpdated.value = false
         focusRequesterList.value = List(listState.layoutInfo.totalItemsCount + 1) {
             FocusRequester()
         }
         editViewModel.insertAt(
             index = index,
         )
+        scrollTo.value = index
+
         CoroutineScope(Dispatchers.Main).launch {
-            listState.scrollToItem(
-                index = index
-            )
-            delay(100)
-            focusTarget.value = index
-            focusFlag.value = true
+            do {
+                delay(10)
+                listState.scrollToItem(
+                    index = scrollTo.value
+                )
+                // スクロールしたらflagが更新される
+            } while (updatedFlag.value.not())
+            delay(10)
+            // 追加したものにfocusを合わせる
+            focusRequesterList.value[scrollTo.value].requestFocus()
         }
     }
 
@@ -149,6 +144,12 @@ fun EditScreen(
                     addItem(index + 1)
                 },
             )
+
+            if (
+                scrollTo.value == index
+            ) {
+                updatedFlag.value = true
+            }
         }
     }
 
@@ -197,8 +198,6 @@ fun EditScreen(
     ) {
         Text(text = "+")
     }
-
-    layoutUpdated.value = true
 }
 
 @Composable
