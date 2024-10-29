@@ -65,6 +65,18 @@ class TestViewModel : KoinComponent {
             return
         }
 
+        try {
+            questionId = getQuestionId(list)
+            mutableQuestion.value = list[questionId]
+            matchList = MutableList(mutableQuestion.value.back.length) { false }
+        } catch (
+            _: RuntimeException
+        ) {
+            // 何もしない
+        }
+    }
+
+    private fun getQuestionId(list: List<Detail>): Int {
         var sum = 0
         val questionList = list.map {
             // 誤答の数の2乗
@@ -77,12 +89,12 @@ class TestViewModel : KoinComponent {
         val num = Random.nextInt(sum)
         for (i in questionList.indices) {
             if (num < questionList[i]) {
-                questionId = i
-                break
+                return i
             }
         }
-        mutableQuestion.value = list[questionId]
-        matchList = MutableList(mutableQuestion.value.back.length) { false }
+
+        // for文からreturn できないときはエラー
+        throw RuntimeException()
     }
 
     fun updateInput(text: String) {
@@ -127,22 +139,43 @@ class TestViewModel : KoinComponent {
             return
         }
 
+        // 結果によらず入力したものをクリアする
+        _input.value = ""
+
+        openText(text)
+
+        if (matchList.all { it }) {
+            // もしすべてが一致していたら解答を開く
+            showAnswer()
+        } else {
+            // 一部があいてないので部分開示を表示する
+            _answer.value = getOpenAnswer()
+        }
+    }
+
+    private fun openText(text: String) {
         var searchindex = 0
-        // 入力文字列を含む間
+        // 入力文字列を含む間繰り返し
         while (true) {
             val matchIndex = question.value.back.indexOf(text, searchindex)
             if (matchIndex == -1) {
                 break
             }
+            //一致したので、そこ以降の文字を探す
             searchindex = matchIndex + text.length
             for (i in matchIndex until matchIndex + text.length) {
                 matchList[i] = true
             }
         }
-        _answer.value = matchList.mapIndexed { index, flag ->
+    }
+
+    private fun getOpenAnswer(): String {
+        return matchList.mapIndexed { index, flag ->
             if (flag) {
+                // trueなら文字をそのまま入れる
                 question.value.back[index].toString()
             } else {
+                // falseでも改行はそのまま入れる
                 if (question.value.back[index].toString() == "\n") {
                     question.value.back[index].toString()
                 } else {
@@ -150,11 +183,5 @@ class TestViewModel : KoinComponent {
                 }
             }
         }.joinToString("")
-
-        if (matchList.all { it }) {
-            showAnswer()
-        }
-
-        _input.value = ""
     }
 }
