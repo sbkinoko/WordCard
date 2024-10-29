@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -24,6 +26,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import common.commonBorder
 import common.componentBackground
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import viewmodel.detail.TestViewModel
 
@@ -40,6 +45,9 @@ fun TestScreen(
     val answer = testViewModel.answer.collectAsState()
     val input = testViewModel.input.collectAsState()
 
+    val frontScroll = rememberScrollState(0)
+    val backScroll = rememberScrollState(0)
+
     LaunchedEffect(Unit) {
         testViewModel.reset()
     }
@@ -47,6 +55,13 @@ fun TestScreen(
     setJumpTarget(
         testViewModel.questionId
     )
+
+    val resetScroll = {
+        CoroutineScope(Dispatchers.Main).launch {
+            backScroll.scrollTo(0)
+            frontScroll.scrollTo(0)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -58,15 +73,20 @@ fun TestScreen(
             },
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Text(
+        Column(
             modifier = Modifier
                 .weight(2f)
                 .fillMaxWidth()
                 .commonBorder()
                 .componentBackground()
-                .padding(5.dp),
-            text = question.value.front
-        )
+                .padding(5.dp)
+                .verticalScroll(frontScroll),
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = question.value.front
+            )
+        }
 
         ColorArea(
             modifier = Modifier
@@ -81,19 +101,24 @@ fun TestScreen(
             }
         )
 
-        Text(
+        Column(
             modifier = Modifier
-                .weight(1f)
+                .weight(2f)
                 .fillMaxWidth()
                 .commonBorder()
                 .componentBackground()
-                .padding(5.dp),
-            text = if (showAnswer.value) {
-                question.value.back
-            } else {
-                answer.value
-            },
-        )
+                .padding(5.dp)
+                .verticalScroll(backScroll),
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = if (showAnswer.value) {
+                    question.value.back
+                } else {
+                    answer.value
+                },
+            )
+        }
 
         Row(
             modifier = Modifier
@@ -135,6 +160,7 @@ fun TestScreen(
                     modifier = Modifier
                         .weight(1f),
                     onClick = {
+                        resetScroll()
                         testViewModel.goOK()
                     }
                 ) {
@@ -144,6 +170,7 @@ fun TestScreen(
                     modifier = Modifier
                         .weight(1f),
                     onClick = {
+                        resetScroll()
                         testViewModel.goNG()
                     }
                 ) {
