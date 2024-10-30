@@ -28,6 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.mongodb.kbson.ObjectId
+import view.dialog.DeleteDialog
 import viewmodel.detail.EditViewModel
 
 @Composable
@@ -57,6 +58,14 @@ fun EditScreen(
 
     LaunchedEffect(Unit) {
         editViewModel.init()
+    }
+
+
+    val dialogState = remember {
+        mutableStateOf(false)
+    }
+    val deleteId = remember {
+        mutableStateOf(ObjectId())
     }
 
     LaunchedEffect(jumpTo) {
@@ -142,9 +151,8 @@ fun EditScreen(
                     )
                 },
                 delete = {
-                    editViewModel.delete(
-                        id = detail.id
-                    )
+                    dialogState.value = true
+                    deleteId.value = detail.id
                 },
                 onClickMove = {
                     editViewModel.move(
@@ -212,6 +220,20 @@ fun EditScreen(
         },
     ) {
         Text(text = "+")
+    }
+
+    if (dialogState.value) {
+        DeleteDialog(
+            onDismissRequest = {
+                dialogState.value = false
+            },
+            onConfirm = {
+                dialogState.value = false
+                editViewModel.delete(
+                    id = deleteId.value
+                )
+            }
+        )
     }
 }
 
