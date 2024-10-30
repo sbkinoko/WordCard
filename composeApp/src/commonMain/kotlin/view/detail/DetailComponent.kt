@@ -129,6 +129,9 @@ fun DetailComponent(
                     color.value = field.take(colorStringLength)
                     backColor.value = field.toColor()
                 },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                ),
             )
 
             TextField(
