@@ -30,11 +30,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import org.mongodb.kbson.ObjectId
 import viewmodel.detail.TestViewModel
 
 @Composable
 fun TestScreen(
-    setJumpTarget: (Int) -> Unit,
+    setJumpTarget: (ObjectId) -> Unit,
     modifier: Modifier = Modifier,
     testViewModel: TestViewModel = koinInject(),
 ) {
@@ -53,7 +54,7 @@ fun TestScreen(
     }
 
     setJumpTarget(
-        testViewModel.questionId
+        question.value.id
     )
 
     val resetScroll = {

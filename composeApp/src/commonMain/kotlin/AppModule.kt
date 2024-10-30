@@ -13,6 +13,8 @@ import usecase.deleteitem.DeleteItemUseCase
 import usecase.deleteitem.DeleteItemUseCaseImpl
 import usecase.getitemorder.GetIOrderedItemUseCase
 import usecase.getitemorder.GetIOrderedItemUseCaseImpl
+import usecase.getorder.GetItemIndexUseCase
+import usecase.getorder.GetItemIndexUseCaseImpl
 import usecase.moveitem.MoveItemUseCase
 import usecase.moveitem.MoveItemUseCaseImpl
 import viewmodel.detail.DetailViewModel
@@ -68,6 +70,12 @@ val AppModule = module {
         )
     }
 
+    single<GetItemIndexUseCase> {
+        GetItemIndexUseCaseImpl(
+            detailOrderRepository = get(),
+            screenTypeRepository = get(),
+        )
+    }
 
     single {
         TopViewModel()

@@ -17,6 +17,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ import common.Const
 import domain.ScreenType
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
+import org.mongodb.kbson.ObjectId
 import viewmodel.detail.DetailViewModel
 
 @Composable
@@ -44,8 +46,8 @@ fun DetailScreen(
         mutableStateOf(false)
     }
 
-    val jumpState = remember {
-        mutableStateOf(0)
+    val jumpState: MutableState<ObjectId> = remember {
+        mutableStateOf(ObjectId())
     }
 
     LaunchedEffect(Unit) {
