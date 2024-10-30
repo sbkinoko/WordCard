@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -29,9 +31,14 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import common.Const
+import common.Const.Color.Companion.deleteButtonColor
 import common.commonBorder
+import domain.Constant
 import domain.Detail
+import io.realm.kotlin.internal.interop.Constants
 
 @Composable
 fun DetailComponent(
@@ -235,8 +242,11 @@ fun RightEditArea(
             modifier = Modifier
                 .fillMaxWidth(),
             onClick = delete,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = deleteButtonColor,
+            )
         ) {
-            Text("-")
+            Text("delete")
         }
     }
 }
