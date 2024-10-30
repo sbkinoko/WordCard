@@ -36,6 +36,8 @@ class TopViewModel : KoinComponent {
 
     fun deleteAt(index: Int) {
         titleRepository.deleteAt(index)
+        // todo
+        //　対応するdetailの削除
     }
 
     fun editTitle(
