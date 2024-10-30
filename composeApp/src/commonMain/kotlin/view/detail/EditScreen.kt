@@ -27,13 +27,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import org.mongodb.kbson.ObjectId
 import viewmodel.detail.EditViewModel
 
 @Composable
 fun EditScreen(
     modifier: Modifier = Modifier,
     editViewModel: EditViewModel = koinInject(),
-    jumpTo: Int = 0,
+    jumpTo: ObjectId = ObjectId(),
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -59,16 +60,20 @@ fun EditScreen(
     }
 
     LaunchedEffect(jumpTo) {
-        if (jumpTo < 0) {
+        val index = editViewModel.getIndexOf(
+            id = jumpTo
+        )
+
+        if (index < 0) {
             return@LaunchedEffect
         }
 
-        if (jumpTo >= itemList.value.size) {
+        if (index >= itemList.value.size) {
             return@LaunchedEffect
         }
 
         listState.scrollToItem(
-            index = jumpTo,
+            index = index,
         )
     }
 

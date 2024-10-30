@@ -14,6 +14,7 @@ import repository.detail.DetailRepository
 import usecase.additem.AddItemUseCase
 import usecase.deleteitem.DeleteItemUseCase
 import usecase.getitemorder.GetIOrderedItemUseCase
+import usecase.getorder.GetItemIndexUseCase
 import usecase.moveitem.MoveItemUseCase
 
 class EditViewModel : KoinComponent {
@@ -24,6 +25,7 @@ class EditViewModel : KoinComponent {
     private val deleteItemUseCase: DeleteItemUseCase by inject()
     private val moveItemUseCase: MoveItemUseCase by inject()
     private val getIOrderedItemUseCase: GetIOrderedItemUseCase by inject()
+    private val getItemIndexUseCase: GetItemIndexUseCase by inject()
 
     private val mutableDetailOrderState: MutableStateFlow<List<Detail>> =
         MutableStateFlow(emptyList())
@@ -95,4 +97,11 @@ class EditViewModel : KoinComponent {
         )
         updateState()
     }
+
+    fun getIndexOf(
+        id: ObjectId,
+    ): Int {
+        return getItemIndexUseCase(objectId = id)
+    }
+
 }

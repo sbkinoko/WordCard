@@ -46,8 +46,6 @@ class TestViewModel : KoinComponent {
     private val _input = MutableStateFlow("")
     val input: StateFlow<String> = _input.asStateFlow()
 
-    var questionId: Int = 0
-
     init {
         reset()
     }
@@ -66,8 +64,7 @@ class TestViewModel : KoinComponent {
         }
 
         try {
-            questionId = getQuestionId(list)
-            mutableQuestion.value = list[questionId]
+            mutableQuestion.value = list[getQuestionId(list)]
             matchList = MutableList(mutableQuestion.value.back.length) { false }
         } catch (
             _: RuntimeException
