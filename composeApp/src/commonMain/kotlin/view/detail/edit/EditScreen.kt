@@ -38,13 +38,6 @@ fun EditScreen(
 ) {
     val focusManager = LocalFocusManager.current
 
-    val clickButton: (() -> Unit) -> () -> Unit = {
-        {
-            focusManager.clearFocus()
-            it()
-        }
-    }
-
     val itemList = editViewModel
         .detailOrderState
         .collectAsState()
@@ -176,10 +169,12 @@ fun EditScreen(
                         index = it,
                     )
                 },
-                onClickUpperAdd = clickButton {
+                onClickUpperAdd =  {
+                    focusManager.clearFocus()
                     addItem(index, 0)
                 },
-                onClickLowerAdd = clickButton {
+                onClickLowerAdd =  {
+                    focusManager.clearFocus()
                     addItem(index, 1)
                 },
             )
@@ -195,7 +190,8 @@ fun EditScreen(
     Button(
         modifier = Modifier
             .fillMaxWidth(),
-        onClick = clickButton {
+        onClick =  {
+            focusManager.clearFocus()
             addItemAtLast()
         },
     ) {
@@ -208,27 +204,28 @@ fun EditScreen(
             .height(120.dp)
             .padding(5.dp),
         onClickJump = { num ->
-            clickButton {
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (num < 0) {
-                        return@launch
-                    }
-
-                    if (num >= itemList.value.size) {
-                        listState.scrollToItem(
-                            index = listState.layoutInfo.totalItemsCount
-                        )
-                        return@launch
-                    }
-
-                    listState.scrollToItem(
-                        index = num,
-                    )
+            focusManager.clearFocus()
+            CoroutineScope(Dispatchers.Main).launch {
+                if (num < 0) {
+                    return@launch
                 }
-            }()
+
+                if (num >= itemList.value.size) {
+                    listState.scrollToItem(
+                        index = listState.layoutInfo.totalItemsCount
+                    )
+                    return@launch
+                }
+
+                listState.scrollToItem(
+                    index = num,
+                )
+            }
+
         },
         onClickSearch = {
             editViewModel.search(it)
+            focusManager.clearFocus()
         }
     )
 
