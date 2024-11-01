@@ -31,6 +31,7 @@ import domain.ScreenType
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 import org.mongodb.kbson.ObjectId
+import view.detail.edit.EditScreen
 import viewmodel.detail.DetailViewModel
 
 @Composable
