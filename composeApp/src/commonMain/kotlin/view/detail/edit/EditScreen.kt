@@ -94,15 +94,7 @@ fun EditScreen(
         mutableStateOf(false)
     }
 
-    val addItem: (index: Int) -> Unit = { index ->
-        focusRequesterList.value = List(listState.layoutInfo.totalItemsCount + 1) {
-            FocusRequester()
-        }
-        editViewModel.insertAt(
-            index = index,
-        )
-        scrollTo.value = index
-
+    val scroll = {
         CoroutineScope(Dispatchers.Main).launch {
             do {
                 delay(10)
@@ -112,9 +104,38 @@ fun EditScreen(
                 // スクロールしたらflagが更新される
             } while (updatedFlag.value.not())
             delay(10)
+
             // 追加したものにfocusを合わせる
             focusRequesterList.value[scrollTo.value].requestFocus()
         }
+    }
+
+    val addItem: (index: Int, position: Int) -> Unit = { index, position ->
+        val afterNum = listState.layoutInfo.totalItemsCount + 1
+        focusRequesterList.value = List(afterNum) {
+            FocusRequester()
+        }
+        updatedFlag.value = false
+
+        editViewModel.insertAt(
+            index = index,
+            position = position,
+        )
+        scrollTo.value = index + position
+
+        scroll()
+    }
+
+    val addItemAtLast: () -> Unit = {
+        val afterNum = listState.layoutInfo.totalItemsCount + 1
+        focusRequesterList.value = List(afterNum) {
+            FocusRequester()
+        }
+        updatedFlag.value = false
+        editViewModel.insertAtLast()
+        scrollTo.value = afterNum - 1
+
+        scroll()
     }
 
     LazyColumn(
@@ -132,8 +153,9 @@ fun EditScreen(
             } else {
                 focusRequesterList.value[index]
             }
+
             DetailComponent(
-                index = index,
+                index = editViewModel.getActualIndex(detail.id),
                 detail = detail,
                 focusRequester = requester,
                 update = { front, back, color ->
@@ -155,10 +177,10 @@ fun EditScreen(
                     )
                 },
                 onClickUpperAdd = clickButton {
-                    addItem(index)
+                    addItem(index, 0)
                 },
                 onClickLowerAdd = clickButton {
-                    addItem(index + 1)
+                    addItem(index, 1)
                 },
             )
 
@@ -174,7 +196,7 @@ fun EditScreen(
         modifier = Modifier
             .fillMaxWidth(),
         onClick = clickButton {
-            addItem(listState.layoutInfo.totalItemsCount)
+            addItemAtLast()
         },
     ) {
         Text(text = "+")
@@ -183,7 +205,7 @@ fun EditScreen(
     BottomButton(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(120.dp)
             .padding(5.dp),
         onClickJump = { num ->
             clickButton {
@@ -203,7 +225,10 @@ fun EditScreen(
                         index = num,
                     )
                 }
-            }
+            }()
+        },
+        onClickSearch = {
+            editViewModel.search(it)
         }
     )
 
@@ -225,6 +250,7 @@ fun EditScreen(
 @Composable
 fun BottomButton(
     onClickJump: (Int) -> Unit,
+    onClickSearch: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -240,7 +266,8 @@ fun BottomButton(
 
         SearchButton(
             modifier = Modifier
-                .weight(2f)
+                .weight(2f),
+            onClick = onClickSearch,
         )
     }
 }

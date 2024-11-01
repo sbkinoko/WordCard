@@ -33,22 +33,33 @@ class EditViewModel : KoinComponent {
     val detailOrderState: StateFlow<List<Detail>>
         get() = mutableDetailOrderState.asStateFlow()
 
-    init {
-        CoroutineScope(Dispatchers.Default).launch {
-            mutableDetailOrderState.collect {
-                println(it)
-            }
-        }
-    }
-
     fun init() {
         updateState()
     }
 
+    private var allList: List<Detail> = emptyList()
+    private var filterText: String = ""
+
+    private val filteredList: List<Detail>
+        get() {
+            return allList.filter {
+                // 指定した文字を含む
+                it.front.contains(filterText) ||
+                        it.back.contains(filterText) ||
+                        it.color.contains(filterText) ||
+                        //　空
+                        (it.front.isEmpty() &&
+                                it.back.isEmpty() &&
+                                it.color.isEmpty())
+            }
+        }
+
     private fun updateState() {
         CoroutineScope(Dispatchers.Default).launch {
+            allList = getIOrderedItemUseCase.invoke()
+
             mutableDetailOrderState.emit(
-                getIOrderedItemUseCase.invoke()
+                filteredList,
             )
         }
     }
@@ -88,13 +99,23 @@ class EditViewModel : KoinComponent {
 
     fun insertAt(
         index: Int,
+        position: Int,
     ) {
+        val detail = filteredList[index]
+        val insertPosition = allList.indexOf(detail) + position
+
         val id = ObjectId()
         addItemUseCase.invoke(objectId = id)
         moveItemUseCase.invoke(
             id = id,
-            index = index.toString(),
+            index = insertPosition.toString(),
         )
+        updateState()
+    }
+
+    fun insertAtLast() {
+        val id = ObjectId()
+        addItemUseCase.invoke(objectId = id)
         updateState()
     }
 
@@ -104,4 +125,17 @@ class EditViewModel : KoinComponent {
         return getItemIndexUseCase(objectId = id)
     }
 
+    fun getActualIndex(id: ObjectId): Int {
+
+        return allList.indexOfFirst {
+            it.id == id
+        }
+    }
+
+    fun search(
+        text: String,
+    ) {
+        filterText = text
+        updateState()
+    }
 }
