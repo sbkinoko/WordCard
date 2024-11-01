@@ -1,16 +1,15 @@
-package view.detail
+package view.detail.edit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -20,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.mongodb.kbson.ObjectId
+import view.detail.DetailComponent
 import view.dialog.DeleteDialog
 import viewmodel.detail.EditViewModel
 
@@ -52,14 +51,9 @@ fun EditScreen(
 
     val listState = rememberLazyListState()
 
-    val idString = remember {
-        mutableStateOf("")
-    }
-
     LaunchedEffect(Unit) {
         editViewModel.init()
     }
-
 
     val dialogState = remember {
         mutableStateOf(false)
@@ -176,42 +170,6 @@ fun EditScreen(
         }
     }
 
-    NumberAndButton(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp),
-        value = idString.value,
-        onValueChange = {
-            idString.value = it
-        },
-        onClick = clickButton {
-            CoroutineScope(Dispatchers.Main).launch {
-                val num = idString.value.toIntOrNull()
-
-                idString.value = ""
-
-                if (num == null) {
-                    return@launch
-                }
-
-                if (num < 0) {
-                    return@launch
-                }
-
-                if (num >= itemList.value.size) {
-                    listState.scrollToItem(
-                        index = listState.layoutInfo.totalItemsCount
-                    )
-                    return@launch
-                }
-
-                listState.scrollToItem(
-                    index = num,
-                )
-            }
-        }
-    )
-
     Button(
         modifier = Modifier
             .fillMaxWidth(),
@@ -221,6 +179,33 @@ fun EditScreen(
     ) {
         Text(text = "+")
     }
+
+    BottomButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+            .padding(5.dp),
+        onClickJump = { num ->
+            clickButton {
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (num < 0) {
+                        return@launch
+                    }
+
+                    if (num >= itemList.value.size) {
+                        listState.scrollToItem(
+                            index = listState.layoutInfo.totalItemsCount
+                        )
+                        return@launch
+                    }
+
+                    listState.scrollToItem(
+                        index = num,
+                    )
+                }
+            }
+        }
+    )
 
     if (dialogState.value) {
         DeleteDialog(
@@ -238,30 +223,24 @@ fun EditScreen(
 }
 
 @Composable
-fun NumberAndButton(
-    value: String,
-    onValueChange: (String) -> Unit,
-    onClick: () -> Unit,
+fun BottomButton(
+    onClickJump: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        TextField(
+
+        JumpButton(
             modifier = Modifier
                 .weight(1f),
-            value = value,
-            onValueChange = onValueChange,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number
-            ),
+            onClickJump = onClickJump,
         )
 
-        Button(
-            onClick = onClick
-        ) {
-            Text(text = "JUMP")
-        }
+        SearchButton(
+            modifier = Modifier
+                .weight(2f)
+        )
     }
 }
