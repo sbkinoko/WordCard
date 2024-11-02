@@ -15,11 +15,13 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
+import view.dialog.DeleteDialog
 import viewmodel.top.TopViewModel
 
 @Composable
@@ -30,6 +32,13 @@ fun TopScreen(
     val focusManager = LocalFocusManager.current
 
     val groups = topViewModel.titleFlow.collectAsState()
+
+    val dialogState = remember {
+        mutableStateOf(false)
+    }
+    val deleteId = remember {
+        mutableStateOf(0)
+    }
 
     Column(
         modifier = modifier
@@ -67,9 +76,8 @@ fun TopScreen(
                         )
                     },
                     onClickDelete = {
-                        topViewModel.deleteAt(
-                            index
-                        )
+                        dialogState.value = true
+                        deleteId.value = index
                     },
                     onEditText = { newTitle ->
                         topViewModel.editTitle(
@@ -88,5 +96,19 @@ fun TopScreen(
         ) {
             Text("+")
         }
+    }
+
+    if (dialogState.value) {
+        DeleteDialog(
+            onDismissRequest = {
+                dialogState.value = false
+            },
+            onConfirm = {
+                dialogState.value = false
+                topViewModel.deleteAt(
+                    index = deleteId.value
+                )
+            }
+        )
     }
 }
