@@ -10,6 +10,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -17,12 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import domain.Title
 import view.detail.RightEditArea
 
 @Composable
 fun TopComponent(
     isEditable: Boolean,
-    text: String,
+    index: Int,
+    title: Title,
     onClickDetail: () -> Unit,
     onClickTest: () -> Unit,
     onEditText: (String) -> Unit,
@@ -30,8 +33,12 @@ fun TopComponent(
     onClickMove: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val title = remember {
-        mutableStateOf(text)
+    val titleText = remember {
+        mutableStateOf(title.title)
+    }
+
+    LaunchedEffect(title) {
+        titleText.value = title.title
     }
 
     Row(
@@ -45,6 +52,9 @@ fun TopComponent(
         horizontalArrangement = Arrangement.spacedBy(5.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        if (isEditable) {
+            Text(text = index.toString())
+        }
         TextField(
             modifier = Modifier
                 .weight(1f)
@@ -53,23 +63,23 @@ fun TopComponent(
                         return@onFocusChanged
                     }
                     onEditText(
-                        title.value
+                        titleText.value
                     )
                 },
-            value = title.value,
+            value = titleText.value,
             onValueChange = {
-                title.value = it
+                titleText.value = it
             },
         )
 
-        if(isEditable){
+        if (isEditable) {
             RightEditArea(
                 modifier = Modifier
                     .width(100.dp),
                 onClickMove = onClickMove,
                 delete = delete,
             )
-        }else{
+        } else {
             Button(
                 onClick = onClickDetail
             ) {

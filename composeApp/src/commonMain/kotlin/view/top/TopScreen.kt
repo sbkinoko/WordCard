@@ -16,6 +16,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +36,7 @@ fun TopScreen(
 ) {
     val focusManager = LocalFocusManager.current
 
-    val groups = topViewModel.titleFlow.collectAsState()
+    val groups = topViewModel.titleOrderState.collectAsState()
 
     val dialogState = remember {
         mutableStateOf(false)
@@ -45,7 +46,11 @@ fun TopScreen(
     }
 
     val isEditable = remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(Unit) {
+        topViewModel.init()
     }
 
     Column(
@@ -72,7 +77,8 @@ fun TopScreen(
                 groups.value
             ) { index, title ->
                 TopComponent(
-                    text = title.title,
+                    index = index,
+                    title = title,
                     isEditable = isEditable.value,
                     onClickDetail = {
                         topViewModel.toEdit(
@@ -86,7 +92,7 @@ fun TopScreen(
                     },
                     onEditText = { newTitle ->
                         topViewModel.editTitle(
-                            index,
+                            title.id,
                             newTitle
                         )
                     },
@@ -95,7 +101,11 @@ fun TopScreen(
                         deleteId.value = title.id
                     },
                     onClickMove = { moveTo ->
-
+                        topViewModel.moveTitle(
+                            id = title.id,
+                            index = moveTo
+                        )
+                        focusManager.clearFocus()
                     }
                 )
             }
@@ -109,12 +119,12 @@ fun TopScreen(
             Text("+")
         }
 
-       EditCheckBox(
-           isEditable = isEditable.value,
-           onCheckChanged =  {
-               isEditable.value = it
-           }
-       )
+        EditCheckBox(
+            isEditable = isEditable.value,
+            onCheckChanged = {
+                isEditable.value = it
+            }
+        )
     }
 
     if (dialogState.value) {
@@ -136,15 +146,15 @@ fun TopScreen(
 private fun EditCheckBox(
     isEditable: Boolean,
     onCheckChanged: (Boolean) -> Unit,
-){
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
-    ){
+    ) {
         Checkbox(
             checked = isEditable,
-            onCheckedChange =onCheckChanged,
+            onCheckedChange = onCheckChanged,
         )
         Text(
             text = "編集モード",

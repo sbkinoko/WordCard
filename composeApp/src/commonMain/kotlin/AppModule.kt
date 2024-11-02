@@ -7,6 +7,8 @@ import repository.screentype.ScreenTypeRepository
 import repository.screentype.ScreenTypeRepositoryImpl
 import repository.title.TitleRepository
 import repository.title.TitleRepositoryImpl
+import repository.titleorder.TitleOrderRepository
+import repository.titleorder.TitleOrderRepositoryImpl
 import usecase.additem.AddItemUseCase
 import usecase.additem.AddItemUseCaseImpl
 import usecase.deleteitem.DeleteItemUseCase
@@ -19,6 +21,8 @@ import usecase.getorder.GetItemIndexUseCase
 import usecase.getorder.GetItemIndexUseCaseImpl
 import usecase.moveitem.MoveItemUseCase
 import usecase.moveitem.MoveItemUseCaseImpl
+import usecase.movetitle.MoveTitleUseCase
+import usecase.movetitle.MoveTitleUseCaseImpl
 import viewmodel.detail.DetailViewModel
 import viewmodel.detail.EditViewModel
 import viewmodel.detail.TestViewModel
@@ -31,6 +35,10 @@ val AppModule = module {
 
     single<TitleRepository> {
         TitleRepositoryImpl()
+    }
+
+    single<TitleOrderRepository> {
+        TitleOrderRepositoryImpl()
     }
 
     single<DetailRepository> {
@@ -64,6 +72,12 @@ val AppModule = module {
         )
     }
 
+    single<MoveTitleUseCase> {
+        MoveTitleUseCaseImpl(
+            titleOrderRepository = get(),
+        )
+    }
+
     single<GetIOrderedItemUseCase> {
         GetIOrderedItemUseCaseImpl(
             detailOrderRepository = get(),
@@ -82,6 +96,7 @@ val AppModule = module {
     single<DeleteTitleUseCase>{
         DeleteTitleUseCaseImpl(
             titleRepository = get(),
+            titleOrderRepository = get(),
             detailRepository = get(),
             detailOrderRepository = get(),
         )
