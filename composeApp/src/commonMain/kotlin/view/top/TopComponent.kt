@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -16,14 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import view.detail.RightEditArea
 
 @Composable
 fun TopComponent(
+    isEditable: Boolean,
     text: String,
     onClickDetail: () -> Unit,
     onClickTest: () -> Unit,
-    onClickDelete: () -> Unit,
     onEditText: (String) -> Unit,
+    delete: () -> Unit,
+    onClickMove: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val title = remember {
@@ -57,22 +61,26 @@ fun TopComponent(
                 title.value = it
             },
         )
-        Button(
-            onClick = onClickDetail
-        ) {
-            Text(text = "Edit")
-        }
 
-        Button(
-            onClick = onClickTest,
-        ) {
-            Text(text = "Test")
-        }
+        if(isEditable){
+            RightEditArea(
+                modifier = Modifier
+                    .width(100.dp),
+                onClickMove = onClickMove,
+                delete = delete,
+            )
+        }else{
+            Button(
+                onClick = onClickDetail
+            ) {
+                Text(text = "Edit")
+            }
 
-        Button(
-            onClick = onClickDelete,
-        ) {
-            Text("-")
+            Button(
+                onClick = onClickTest,
+            ) {
+                Text(text = "Test")
+            }
         }
     }
 }
