@@ -7,47 +7,24 @@ import domain.toTitle
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
 class TitleRepositoryImpl : TitleRepository {
-    private val mutableRealmTitleFlow = MutableSharedFlow<List<Title>>()
-    private val titleFlow: SharedFlow<List<Title>>
-        get() = mutableRealmTitleFlow.asSharedFlow()
-
-    override val titleState: StateFlow<List<Title>>
-        get() = titleFlow.stateIn(
-            scope = CoroutineScope(Dispatchers.Default),
-            started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(),
-            initialValue = titleList,
-        )
-
     private val config: RealmConfiguration =
         RealmConfiguration.create(schema = setOf(RealmTitle::class))
     private val realm: Realm = Realm.open(config)
 
-    private var titleList = realm.query<RealmTitle>().find().toList().map {
-        it.toTitle()
+    override fun get(id: ObjectId): Title? {
+        return realm.query<RealmTitle>("id == $0", id)
+            .first()
+            .find()
+            ?.toTitle()
     }
-        set(value) {
-            field = value
-            CoroutineScope(Dispatchers.Default).launch {
-                mutableRealmTitleFlow.emit(value)
-            }
-        }
 
     override fun updateAt(
-        index: Int,
+        id: ObjectId,
         title: String
     ) {
-        val id = titleList[index].id
         val target = realm.query<RealmTitle>("id == $0", id).first().find()
             ?: return
         realm.writeBlocking {
@@ -57,23 +34,18 @@ class TitleRepositoryImpl : TitleRepository {
                 this.title = title
             }
         }
-
-        val list = titleList.toMutableList()
-        list[index] = list[index].copy(
-            title = title
-        )
-        titleList = list
     }
 
-    override fun add() {
+    override fun add(
+        objectId: ObjectId,
+    ) {
         realm.writeBlocking {
-            val title = RealmTitle()
+            val title = RealmTitle().apply {
+                this.id = objectId
+            }
             copyToRealm(
                 title
             )
-
-            val list = titleList + title.toTitle()
-            titleList = list
         }
     }
 
@@ -84,11 +56,6 @@ class TitleRepositoryImpl : TitleRepository {
                 findLatest(ob)?.let {
                     delete(it)
                 }
-            }
-
-            val list = titleList.toMutableList()
-            titleList = list.filter {
-                it.id != id
             }
         }
     }

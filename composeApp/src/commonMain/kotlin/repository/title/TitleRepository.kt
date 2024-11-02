@@ -1,20 +1,24 @@
 package repository.title
 
 import domain.Title
-import kotlinx.coroutines.flow.StateFlow
 import org.mongodb.kbson.ObjectId
 
 interface TitleRepository {
-    val titleState: StateFlow<List<Title>>
 
-    fun add()
+    fun add(
+        objectId: ObjectId,
+    )
 
     fun updateAt(
-        index: Int,
+        id: ObjectId,
         title: String,
     )
 
     fun delete(
-        id:ObjectId,
+        id: ObjectId,
     )
+
+    fun get(
+        id: ObjectId,
+    ): Title?
 }
