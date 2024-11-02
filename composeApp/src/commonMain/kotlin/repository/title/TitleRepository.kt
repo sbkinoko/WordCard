@@ -2,6 +2,7 @@ package repository.title
 
 import domain.Title
 import kotlinx.coroutines.flow.StateFlow
+import org.mongodb.kbson.ObjectId
 
 interface TitleRepository {
     val titleState: StateFlow<List<Title>>
@@ -13,7 +14,7 @@ interface TitleRepository {
         title: String,
     )
 
-    fun deleteAt(
-        index: Int,
+    fun delete(
+        id:ObjectId,
     )
 }

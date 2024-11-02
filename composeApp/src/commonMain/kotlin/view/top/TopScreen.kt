@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
+import org.mongodb.kbson.ObjectId
 import view.dialog.DeleteDialog
 import viewmodel.top.TopViewModel
 
@@ -37,7 +38,7 @@ fun TopScreen(
         mutableStateOf(false)
     }
     val deleteId = remember {
-        mutableStateOf(0)
+        mutableStateOf(ObjectId())
     }
 
     Column(
@@ -77,7 +78,7 @@ fun TopScreen(
                     },
                     onClickDelete = {
                         dialogState.value = true
-                        deleteId.value = index
+                        deleteId.value = title.id
                     },
                     onEditText = { newTitle ->
                         topViewModel.editTitle(
@@ -105,8 +106,8 @@ fun TopScreen(
             },
             onConfirm = {
                 dialogState.value = false
-                topViewModel.deleteAt(
-                    index = deleteId.value
+                topViewModel.delete(
+                    id = deleteId.value
                 )
             }
         )

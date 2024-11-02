@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.mongodb.kbson.ObjectId
 
 class TitleRepositoryImpl : TitleRepository {
     private val mutableRealmTitleFlow = MutableSharedFlow<List<Title>>()
@@ -76,10 +77,8 @@ class TitleRepositoryImpl : TitleRepository {
         }
     }
 
-    override fun deleteAt(index: Int) {
+    override fun delete(id: ObjectId) {
         realm.writeBlocking {
-            val id = titleList[index].id
-
             val ob = realm.query<RealmTitle>("id == $0", id).first().find()
             if (ob != null) {
                 findLatest(ob)?.let {
@@ -88,8 +87,9 @@ class TitleRepositoryImpl : TitleRepository {
             }
 
             val list = titleList.toMutableList()
-            list.removeAt(index)
-            titleList = list
+            titleList = list.filter {
+                it.id != id
+            }
         }
     }
 }
