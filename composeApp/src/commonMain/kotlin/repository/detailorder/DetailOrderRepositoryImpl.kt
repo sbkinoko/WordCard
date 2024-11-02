@@ -37,7 +37,17 @@ class DetailOrderRepositoryImpl : DetailOrderRepository {
     }
 
     override fun delete(titleId: ObjectId) {
-        TODO("Not yet implemented")
+        val order = realm
+            .query<RealmDetailOrder>("titleId == $0", titleId)
+            .first()
+            .find()
+            ?: return
+
+        realm.writeBlocking {
+            findLatest(order)?.let {
+                delete(it)
+            }
+        }
     }
 
     override fun getItemOrder(

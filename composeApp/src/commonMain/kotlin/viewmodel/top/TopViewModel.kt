@@ -10,10 +10,12 @@ import org.koin.core.component.inject
 import org.mongodb.kbson.ObjectId
 import repository.screentype.ScreenTypeRepository
 import repository.title.TitleRepository
+import usecase.deletetitle.DeleteTitleUseCase
 
 class TopViewModel : KoinComponent {
     private val screenTypeRepository: ScreenTypeRepository by inject()
     private val titleRepository: TitleRepository by inject()
+    private val deleteTitleUseCase: DeleteTitleUseCase by inject()
 
     val titleFlow = titleRepository.titleState
 
@@ -36,9 +38,9 @@ class TopViewModel : KoinComponent {
     }
 
     fun delete(id: ObjectId) {
-        titleRepository.delete(id)
-        // todo
-        //　対応するdetailの削除
+        deleteTitleUseCase.invoke(
+            titleId = id,
+        )
     }
 
     fun editTitle(
